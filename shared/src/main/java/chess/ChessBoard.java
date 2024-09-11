@@ -1,5 +1,8 @@
 package chess;
 
+import javax.swing.*;
+import java.util.Arrays;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -8,8 +11,9 @@ package chess;
  */
 public class ChessBoard {
 
+    private ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard() {
-        
+        resetBoard();
     }
 
     /**
@@ -19,7 +23,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        squares[position.getRow()][position.getColumn()]=piece;
     }
 
     /**
@@ -30,7 +34,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        return squares[position.getRow()][position.getColumn()];
     }
 
     /**
@@ -38,6 +42,40 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        for(int i=0;i<8;i++)
+            for(int j=0;j<8;j++)
+                squares[i][j]=null;
+    }
+
+
+    @Override
+    public String toString() {
+        String boardRepresentation = "  0  1  2  3  4  5  6  7\n";
+        for(int i=7;i>=0;i--) {
+            boardRepresentation+=Integer.toString(i);
+            for (int j=0; j < 8; j++) {
+
+                if (squares[i][j] != null)
+                    boardRepresentation+=squares[i][j].toString() + "|";
+                else
+                    boardRepresentation+="  |";
+            }
+            boardRepresentation+=System.lineSeparator();
+        }
+        return boardRepresentation;
+    }
+
+    public static void main(String[]args)
+    {
+        ChessBoard testBoard = new ChessBoard();
+        System.out.println("Piece at (0,0):");
+        System.out.println(testBoard.getPiece(new ChessPosition(0,0)));
+
+        testBoard.addPiece(new ChessPosition(0,0), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
+        System.out.println("Piece at (0,0):");
+        System.out.println(testBoard.getPiece(new ChessPosition(0,0)));
+
+        System.out.println("The whole test board:");
+        System.out.println(testBoard);
     }
 }
