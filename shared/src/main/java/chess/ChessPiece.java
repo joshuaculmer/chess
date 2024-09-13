@@ -56,6 +56,67 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        return type.toString();
+        if(color== ChessGame.TeamColor.WHITE) {
+            switch (type) {
+                case KING -> {
+                    return "K";
+                }
+                case PAWN -> {
+                    return "P";
+                }
+                case ROOK -> {
+                    return "R";
+                }
+                case KNIGHT -> {
+                    return "N";
+                }
+                case BISHOP -> {
+                    return "B";
+                }
+                case QUEEN -> {
+                    return "Q";
+                }
+            }
+        }
+        else
+        {
+            switch (type) {
+                case KING -> {
+                    return "k";
+                }
+                case PAWN -> {
+                    return "p";
+                }
+                case ROOK -> {
+                    return "r";
+                }
+                case KNIGHT -> {
+                    return "n";
+                }
+                case BISHOP -> {
+                    return "b";
+                }
+                case QUEEN -> {
+                    return "q";
+                }
+            }
+        }
+            throw  new RuntimeException("Invalid Piece, unable to run toString()");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that=(ChessPiece) o;
+        if (type != that.type) return false;
+        return color == that.color;
+    }
+
+    @Override
+    public int hashCode() {
+        int result=type.hashCode();
+        result=31 * result + color.hashCode();
+        return result;
     }
 }

@@ -85,7 +85,7 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        String boardRepresentation = "  1  2  3  4  5  6  7  8\n";
+        String boardRepresentation = " 1 2 3 4 5 6 7 8\n";
         for(int i=7;i>=0;i--) {
             boardRepresentation+=Integer.toString(i+1);
             for (int j=0; j < 8; j++) {
@@ -93,11 +93,24 @@ public class ChessBoard {
                 if (squares[i][j] != null)
                     boardRepresentation+=squares[i][j].toString() + "|";
                 else
-                    boardRepresentation+="  |";
+                    boardRepresentation+=" |";
             }
             boardRepresentation+=System.lineSeparator();
         }
         return boardRepresentation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that=(ChessBoard) o;
+        return Arrays.deepEquals(squares, that.squares);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(squares);
     }
 
     public static void main(String[]args)
