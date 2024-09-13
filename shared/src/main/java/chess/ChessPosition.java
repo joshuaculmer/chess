@@ -59,6 +59,13 @@ public class ChessPosition {
         return result;
     }
 
+    public boolean isOnBoard()
+    {
+        if(row > 7 || row < 0 || col > 7 || col < 0)
+            return true;
+        else
+            return false;
+    }
 
 
     // Test functions for ChessPosition Class

@@ -53,6 +53,25 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
     }
+    public boolean isValidMove(ChessBoard board, ChessMove move)
+    {
+        // Move takes this piece out of bounds, therefore inValid
+        ChessPosition endPos = move.getEndPosition();
+        if(! endPos.isOnBoard())
+            return false;
+        // Move takes a piece on our side, therefore inValid
+        else if(board.getPiece(endPos).getTeamColor() == getTeamColor())
+            return false;
+
+        else if(getPieceType() == PieceType.PAWN) {
+            // Pawn cannot attack an opponents pawn directly in front of it
+            if(board.getPiece(endPos).getTeamColor() != getTeamColor() && endPos.getColumn() == move.getStartPosition().getColumn())
+                return false;
+            else if(board.getPiece(endPos).getTeamColor() != getTeamColor() && endPos.getColumn() != move.getStartPosition().getColumn())
+                return true;
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
