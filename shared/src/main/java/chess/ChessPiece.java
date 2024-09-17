@@ -88,7 +88,7 @@ public class ChessPiece {
             System.out.println(move.toString());
             if (! isValidMove(board, move)) {
                 moves.remove(move);
-
+                i--;
             }
         }
 
@@ -98,23 +98,33 @@ public class ChessPiece {
     {
         // Move takes this piece out of bounds, therefore inValid
         ChessPosition endPos = move.getEndPosition();
-        if(! endPos.isOnBoard())
-            return false;
-        // endPos is empty
-        else if(board.getPiece(endPos) == null)
-            return true;
-        // Move takes a piece on our side, therefore inValid
-        else if(board.getPiece(endPos).getTeamColor() == getTeamColor())
+        if(!endPos.isOnBoard())
             return false;
 
+        // Pawn move validation checking
         else if(getPieceType() == PieceType.PAWN) {
-            // Pawn cannot attack an opponents pawn directly in front of it
-            if(board.getPiece(endPos).getTeamColor() != getTeamColor() && endPos.getColumn() == move.getStartPosition().getColumn())
-                return false;
-            else if(board.getPiece(endPos).getTeamColor() != getTeamColor() && endPos.getColumn() != move.getStartPosition().getColumn())
+            if(endPos.getColumn() == move.getStartPosition().getColumn())
+            {
+                // Moving up/down a column is ok if we move into an empty spot only
+                if(board.getPiece(endPos) == null)
+                    return true;
+            }
+            else if(board.getPiece(endPos).getTeamColor() != getTeamColor())
                 return true;
+            else
+                return false;
         }
-        return true;
+
+        // endPos is empty or this piece attacks an opponent
+        else if(board.getPiece(endPos) == null || board.getPiece(endPos).getTeamColor() != getTeamColor())
+            return true;
+        // endPos has a piece of our color on it already
+        return false;
+    }
+
+    private boolean isPathEmpty(ChessPosition start, ChessPosition end)
+    {
+        return false;
     }
 
     private Collection<ChessMove> kingMoves(ChessPosition position)
