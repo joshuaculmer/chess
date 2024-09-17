@@ -121,14 +121,39 @@ public class ChessPiece {
 
         // endPos is empty or this piece attacks an opponent
         else if(board.getPiece(endPos) == null || board.getPiece(endPos).getTeamColor() != getTeamColor())
-            return true;
+            return isPathEmpty(board,move.getStartPosition(),endPos);
         // endPos has a piece of our color on it already
         return false;
     }
 
-    private boolean isPathEmpty(ChessPosition start, ChessPosition end)
+    // isPathEmpty assumes that two positions are passed in and form a direct path
+    // Paths may either be vertical, horizontal, or diagonal
+    private boolean isPathEmpty(ChessBoard board, ChessPosition start, ChessPosition end)
     {
-        return false;
+        // if col is the same check all rows
+        if(start.getColumn()==end.getColumn()) {
+            for (int row=start.getRow()+1; row < end.getRow(); row++)
+                if (board.getPiece(new ChessPosition(row, start.getColumn())) != null)
+                    return false;
+            for (int row=end.getRow()+1; row < start.getRow(); row++)
+                if (board.getPiece(new ChessPosition(row, start.getColumn())) != null)
+                    return false;
+            return true;
+        }
+        // if row is the same check all col
+        if(start.getRow()==end.getRow())
+        {
+            for(int col=start.getColumn()+1; col < end.getColumn(); col++)
+                if (board.getPiece(new ChessPosition(start.getRow(), col)) != null)
+                    return false;
+            for(int col=end.getColumn()+1; col< start.getColumn(); col++)
+                if (board.getPiece(new ChessPosition(start.getRow(), col)) != null)
+                    return false;
+            return true;
+        }
+
+        // if on a diagonal, check the diagonal
+        return true;
     }
 
     private Collection<ChessMove> kingMoves(ChessPosition position)
