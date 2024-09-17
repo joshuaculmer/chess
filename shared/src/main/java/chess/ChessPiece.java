@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import static java.lang.Math.abs;
+
 /**
  * Represents a single chess piece
  * <p>
@@ -107,7 +109,7 @@ public class ChessPiece {
             {
                 // Moving up/down a column is ok if we move into an empty spot only
                 if(board.getPiece(endPos) == null)
-                    return true;
+                    return isPathEmpty(board,move.getStartPosition(),endPos);;
             }
             // not moving just up or down the column, therefore we must attack something
             // attacking nothing is invalid
@@ -146,13 +148,26 @@ public class ChessPiece {
             for(int col=start.getColumn()+1; col < end.getColumn(); col++)
                 if (board.getPiece(new ChessPosition(start.getRow(), col)) != null)
                     return false;
-            for(int col=end.getColumn()+1; col< start.getColumn(); col++)
+            for(int col=end.getColumn()+1; col < start.getColumn(); col++)
                 if (board.getPiece(new ChessPosition(start.getRow(), col)) != null)
                     return false;
             return true;
         }
 
-        // if on a diagonal, check the diagonal
+        int verticalDistance=end.getRow()-start.getRow();
+        int horizontalDistance=end.getColumn()-start.getColumn();
+        if(abs(horizontalDistance)==abs(verticalDistance)) {
+            int rowIncrement = verticalDistance>0 ? 1:-1;
+            int colIncrement = horizontalDistance>0 ? 1:-1;
+            int row=start.getRow();
+            int col=start.getColumn();
+            while(row!=end.getRow()-rowIncrement) {
+                row+=rowIncrement;
+                col+=colIncrement;
+                if(board.getPiece(new ChessPosition(row, col))!=null)
+                    return false;
+            }
+        }
         return true;
     }
 
