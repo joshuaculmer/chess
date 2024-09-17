@@ -61,10 +61,7 @@ public class ChessPosition {
 
     public boolean isOnBoard()
     {
-        if(row > 7 || row < 0 || col > 7 || col < 0)
-            return true;
-        else
-            return false;
+        return row <= 8 && row >= 1 && col <= 8 && col >= 1;
     }
 
 
