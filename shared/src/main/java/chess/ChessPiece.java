@@ -109,6 +109,10 @@ public class ChessPiece {
                 if(board.getPiece(endPos) == null)
                     return true;
             }
+            // not moving just up or down the column, therefore we must attack something
+            // attacking nothing is invalid
+            else if(board.getPiece(endPos)==null)
+                return false;
             else if(board.getPiece(endPos).getTeamColor() != getTeamColor())
                 return true;
             else
@@ -148,40 +152,40 @@ public class ChessPiece {
         int row = position.getRow();
         int col = position.getColumn();
 
-        if(this.getTeamColor() == ChessGame.TeamColor.WHITE)
-        {
-            allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row+1, col-1), null  ));
-            allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row+1, col), null  ));
-            allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row+1, col+1), null  ));
+        if(this.getTeamColor() == ChessGame.TeamColor.WHITE) {
             if (row == 2)
-                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row+2, col), null  ));
+                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row + 2, col), null));
             // All possible moves if this pawn can be promoted
             if (row + 1 == 8) {
-                for(PieceType promoPiece : PieceType.values()) {
-                    if(!(promoPiece.equals(PieceType.PAWN) || promoPiece.equals(PieceType.KING))) {
+                for (PieceType promoPiece : PieceType.values()) {
+                    if (!(promoPiece.equals(PieceType.PAWN) || promoPiece.equals(PieceType.KING))) {
                         allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row + 1, col - 1), promoPiece));
                         allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row + 1, col), promoPiece));
                         allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row + 1, col + 1), promoPiece));
                     }
                 }
+            } else {
+                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row+1, col-1), null  ));
+                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row+1, col+1), null  ));
+                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row + 1, col), null));
             }
         }
-        else if(this.getTeamColor() == ChessGame.TeamColor.BLACK)
-        {
-            allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row-1, col-1), null  ));
-            allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row-1, col), null  ));
-            allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row-1, col+1), null  ));
+        else if(this.getTeamColor() == ChessGame.TeamColor.BLACK) {
             if (row == 7)
-                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row-2, col), null  ));
+                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row - 2, col), null));
             // All possible moves if this pawn can be promoted
             if (row - 1 == 1) {
-                for(PieceType promoPiece : PieceType.values()) {
-                    if(!(promoPiece.equals(PieceType.PAWN) || promoPiece.equals(PieceType.KING))) {
+                for (PieceType promoPiece : PieceType.values()) {
+                    if (!(promoPiece.equals(PieceType.PAWN) || promoPiece.equals(PieceType.KING))) {
                         allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row - 1, col - 1), promoPiece));
                         allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row - 1, col), promoPiece));
                         allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row - 1, col + 1), promoPiece));
                     }
                 }
+            } else {
+                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row - 1, col - 1), null));
+                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row - 1, col + 1), null));
+                allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row - 1, col), null));
             }
         }
 
