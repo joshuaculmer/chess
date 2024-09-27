@@ -62,32 +62,25 @@ public class ChessPiece {
         switch (currentType){
             case KING -> {
                 moves.addAll(kingMoves(myPosition));
-                break;
             }
             case PAWN -> {
                 moves.addAll(pawnMoves(myPosition));
-                break;
             }
             case ROOK -> {
                 moves.addAll(rookMoves(myPosition));
-                break;
             }
             case KNIGHT -> {
                 moves.addAll(knightMoves(myPosition));
-                break;
             }
             case BISHOP -> {
                 moves.addAll(bishopMoves(myPosition));
-                break;
             }
             case QUEEN -> {
                 moves.addAll(queenMoves(myPosition));
-                break;
             }
         }
         for(int i=0; i<moves.size(); i++) {
             ChessMove move = ((ArrayList<ChessMove>) moves).get(i);
-            System.out.println(move.toString());
             if (! isValidMove(board, move)) {
                 moves.remove(move);
                 i--;
@@ -286,52 +279,10 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        if(color== ChessGame.TeamColor.WHITE) {
-            switch (type) {
-                case KING -> {
-                    return "K";
-                }
-                case PAWN -> {
-                    return "P";
-                }
-                case ROOK -> {
-                    return "R";
-                }
-                case KNIGHT -> {
-                    return "N";
-                }
-                case BISHOP -> {
-                    return "B";
-                }
-                case QUEEN -> {
-                    return "Q";
-                }
-            }
-        }
+        if(getTeamColor() == ChessGame.TeamColor.WHITE)
+            return type.toString().substring(0,1);
         else
-        {
-            switch (type) {
-                case KING -> {
-                    return "k";
-                }
-                case PAWN -> {
-                    return "p";
-                }
-                case ROOK -> {
-                    return "r";
-                }
-                case KNIGHT -> {
-                    return "n";
-                }
-                case BISHOP -> {
-                    return "b";
-                }
-                case QUEEN -> {
-                    return "q";
-                }
-            }
-        }
-            throw  new RuntimeException("Invalid Piece, unable to run toString()");
+            return type.toString().substring(0,1).toLowerCase();
     }
 
     @Override
