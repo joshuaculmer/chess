@@ -41,6 +41,11 @@ public class ChessBoard {
         return squares[position.getRow()-1][position.getColumn()-1];
     }
 
+    public ChessPiece removePiece(ChessPosition position) {
+        ChessPiece removedPiece = squares[position.getRow()-1][position.getColumn()-1];
+        squares[position.getRow()-1][position.getColumn()-1] = null;
+        return removedPiece;
+    }
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
