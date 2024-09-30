@@ -100,7 +100,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return isInCheck(teamColor) && (!kingHasSafeMoves(teamColor));
     }
 
     /**
@@ -111,7 +111,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return (! isInCheck(teamColor)) && (isKingSurrounded(teamColor));
+        return (!isInCheck(teamColor)) && (!kingHasSafeMoves(teamColor) && validMovesForTeam(teamColor).size()==0);
     }
 
     /**
@@ -158,7 +158,7 @@ public class ChessGame {
         return null; // this should throw an exception, but the game should always have a king for both sides
     }
 
-    private boolean isKingSurrounded(TeamColor color){
+    private boolean kingHasSafeMoves(TeamColor color){
         Collection<ChessMove> kingMoveList;
         kingMoveList = validMoves(getKingPos(color));
 
@@ -170,12 +170,11 @@ public class ChessGame {
             board = tempBoard;
             if(!isInCheck(color)){
                 setBoard(originalBoard);
-                return false;
+                return true;
             }
             setBoard(originalBoard);
         }
-
-        return true;
+        return false;
     }
 
 }
