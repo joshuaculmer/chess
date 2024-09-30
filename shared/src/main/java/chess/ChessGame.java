@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -15,17 +16,12 @@ public class ChessGame {
     private ArrayList<ChessMove> moves;
     private TeamColor teamTurn;
 
-    private ChessPosition whiteKingPos;
-    private ChessPosition blackKingPos;
-
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
         moves = new ArrayList<ChessMove>();
         teamTurn = TeamColor.WHITE;
-        whiteKingPos = new ChessPosition(1,5);
-        blackKingPos = new ChessPosition(8,5);
     }
 
     /**
@@ -61,7 +57,12 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessBoard board = getBoard();
+        ChessPiece piece = board.getPiece(startPosition);
+        if(piece != null)
+            return piece.pieceMoves(board, startPosition);
+        else
+            return null;
     }
 
     /**
@@ -81,7 +82,15 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+
+        Collection<ChessMove> opponentMoveList;
+        opponentMoveList = TeamColor.WHITE == teamColor ? validMovesForTeam(TeamColor.BLACK) : validMovesForTeam(TeamColor.WHITE);
+
+        for(ChessMove move : opponentMoveList) {
+            if(move.getEndPosition().equals(getKingPos(teamColor)))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -122,4 +131,33 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return board;
     }
+
+
+    private Collection<ChessMove> validMovesForTeam(ChessGame.TeamColor color)
+    {
+        LinkedList<ChessMove> movesList = new LinkedList<ChessMove>();
+        for(int row = 1; row <= 8; row++) {
+            for(int col = 1; col <= 8; col++) {
+                ChessPiece currentPiece = getBoard().getPiece(new ChessPosition(row,col));
+                if(currentPiece != null && currentPiece.getTeamColor() == color) {
+                    movesList.addAll(validMoves(new ChessPosition(row,col)));
+                }
+            }
+        }
+        return movesList;
+    }
+
+    private ChessPosition getKingPos(TeamColor color){
+        for(int row = 1; row <= 8; row++) {
+            for(int col = 1; col <= 8; col++) {
+                ChessPiece currentPiece = getBoard().getPiece(new ChessPosition(row,col));
+                if(currentPiece != null && currentPiece.getTeamColor() == color && currentPiece.getPieceType() == ChessPiece.PieceType.KING)
+                    return new ChessPosition(row,col);
+            }
+        }
+        return null; // this should throw an exception, but the game should always have a king for both sides
+    }
+
+
+
 }
