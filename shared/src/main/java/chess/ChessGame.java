@@ -165,7 +165,7 @@ public class ChessGame {
             for(int col = 1; col <= 8; col++) {
                 ChessPiece currentPiece = getBoard().getPiece(new ChessPosition(row,col));
                 if(currentPiece != null && currentPiece.getTeamColor() == color) {
-                    movesList.addAll(currentPiece.pieceMoves(board, new ChessPosition(row,col)));
+                    movesList.addAll(currentPiece.pieceMoves(board, new ChessPosition(row,col))); // Error here where WHITE  rook is not adding a move to hit the black king, which does not register as still in check when the rook moves
                 }
             }
         }

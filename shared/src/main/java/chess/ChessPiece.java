@@ -230,7 +230,7 @@ public class ChessPiece {
         int row=position.getRow();
         int col=position.getColumn();
 
-        for(int i=-7; i<7; i++) {
+        for(int i=-7; i<=7; i++) {
             allPossibleRookMoves.add(new ChessMove(position, new ChessPosition(row+i, col), null));
             allPossibleRookMoves.add(new ChessMove(position, new ChessPosition(row, col+i), null));
         }
