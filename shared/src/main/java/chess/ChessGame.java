@@ -75,6 +75,14 @@ public class ChessGame {
             return null;
     }
 
+    private void advanceTeamTurn(){
+        if (getTeamTurn() == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
+        }
+    }
+
     /**
      * Makes a move in a chess game
      *
@@ -82,7 +90,26 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> movesList = validMoves(move.getStartPosition());
+
+        if(movesList != null && movesList.contains(move)) {
+            ChessPiece pieceToMove=getBoard().getPiece(move.getStartPosition());
+            if (pieceToMove != null) {
+                if (pieceToMove.getTeamColor() == getTeamTurn()) {
+                    pieceToMove = getBoard().removePiece(move.getStartPosition());
+                    if(move.getPromotionPiece() != null)
+                        pieceToMove = new ChessPiece(pieceToMove.getTeamColor(), move.getPromotionPiece());
+                    getBoard().addPiece(move.getEndPosition(), pieceToMove);
+                    advanceTeamTurn();
+                }
+                else
+                    throw new InvalidMoveException("Move out of turn");
+            }
+            else
+                throw new InvalidMoveException("No piece at " + move.getStartPosition().toString());
+        }
+        else
+            throw new InvalidMoveException(move.toString() + " is an illegal move");
     }
 
     /**
@@ -199,7 +226,9 @@ public class ChessGame {
     private boolean moveIntoCheck(ChessMove move, TeamColor color) {
         ChessBoard tempBoard = getBoard();
         ChessBoard originalBoard = new ChessBoard(getBoard());
-        ChessPiece currentKing = board.getPiece(getKingPos(color));
+        ChessPosition kingPosition = getKingPos(color);
+        if(kingPosition == null)  // Test case for when there is no king on the board, king can't be in check if not there
+            return false;
         tempBoard.addPiece(move.getEndPosition(), tempBoard.removePiece(move.getStartPosition()));
         board = tempBoard;
         if(isInCheck(color)){
