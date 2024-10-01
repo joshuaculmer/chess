@@ -279,6 +279,9 @@ public class ChessPiece {
 
     @Override
     public String toString() {
+        if(getPieceType() == PieceType.KNIGHT)
+            return getTeamColor() == ChessGame.TeamColor.WHITE ? "N" : "n";
+
         if(getTeamColor() == ChessGame.TeamColor.WHITE)
             return type.toString().substring(0,1);
         else
