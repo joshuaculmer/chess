@@ -1,5 +1,7 @@
 package server;
 
+import com.google.gson.Gson;
+import service.ClearService;
 import spark.*;
 
 public class Server {
@@ -11,8 +13,10 @@ public class Server {
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
-
         Spark.staticFiles.location("web");
+
+        var clearService = new ClearService();
+        var serializer = new Gson();
 
         // Register your endpoints and handle exceptions here.
 
@@ -22,7 +26,7 @@ public class Server {
         Spark.get("/game", (req, res) -> printAndReturn("List Games Called"));
         Spark.post("/game", (req, res) -> printAndReturn("Create Game Called"));
         Spark.put("/game", (req, res) -> printAndReturn("Join Game Called"));
-        Spark.delete("/db", (req, res) -> printAndReturn("Delete DB Called"));
+        Spark.delete("/db", (req, res) -> serializer.toJson(clearService.clearAll()));
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 

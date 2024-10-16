@@ -23,3 +23,15 @@ curl -X PUT 'http://localhost:8080/game' -d '{"playerColor": "WHITE/BLACK","game
 
 Clear DB
 curl -X DELETE 'http://localhost:8080/db'
+
+
+ # GSON Notes
+var serializer = new Gson();
+
+var game = new ChessGame();
+
+// serialize to JSON
+var json = serializer.toJson(game);
+
+// deserialize back to ChessGame
+game = serializer.fromJson(json, ChessGame.class);

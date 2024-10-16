@@ -2,10 +2,12 @@ package service;
 
 public class ClearService {
 
-    public void clearAll() {
+    public String clearAll(){
         clearAuthData();
         clearGameData();
         clearUserData();
+
+        return ""; // Success
     }
 
     public void clearUserData() {
