@@ -1,8 +1,11 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.UserDAOMemory;
+import model.AuthData;
 import model.UserData;
 import service.ClearService;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
@@ -18,12 +21,12 @@ public class Server {
         Spark.staticFiles.location("web");
 
         var clearService = new ClearService();
-        var userService = new UserService();
+        var userDB = new UserDAOMemory();
         var serializer = new Gson();
 
         // Register your endpoints and handle exceptions here.
 
-        Spark.post("/user", (req, res) -> serializer.toJson(userService.register(serializer.fromJson(req.body(), UserData.class))));
+        Spark.post("/user", (req, res) -> registerUser(req,res, serializer));
         Spark.post("/session", (req, res) -> printAndReturn("Login User Called"));
         Spark.delete("/session", (req,res) -> printAndReturn("Logout User Called"));
         Spark.get("/game", (req, res) -> printAndReturn("List Games Called"));
@@ -40,5 +43,11 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    public Object registerUser(Request req, Response res, Gson serializer) {
+        UserData userData = serializer.fromJson(req.body(), UserData.class);
+        AuthData authData = UserService.register(userData);
+        return serializer.toJson(authData);
     }
 }
