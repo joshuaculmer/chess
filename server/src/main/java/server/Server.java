@@ -1,7 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
+import model.UserData;
 import service.ClearService;
+import service.UserService;
 import spark.*;
 
 public class Server {
@@ -16,12 +18,13 @@ public class Server {
         Spark.staticFiles.location("web");
 
         var clearService = new ClearService();
+        var userService = new UserService();
         var serializer = new Gson();
 
         // Register your endpoints and handle exceptions here.
 
-        Spark.post("/user", (req, res) -> printAndReturn("Register User Called"));
-        Spark.post("/session", (req,res) -> printAndReturn("Login User Called"));
+        Spark.post("/user", (req, res) -> serializer.toJson(userService.register(serializer.fromJson(req.body(), UserData.class))));
+        Spark.post("/session", (req, res) -> printAndReturn("Login User Called"));
         Spark.delete("/session", (req,res) -> printAndReturn("Logout User Called"));
         Spark.get("/game", (req, res) -> printAndReturn("List Games Called"));
         Spark.post("/game", (req, res) -> printAndReturn("Create Game Called"));
