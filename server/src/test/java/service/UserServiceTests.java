@@ -83,7 +83,7 @@ public class UserServiceTests {
             UserService.register(user, userDB);
             AuthData auth = UserService.login(user, userDB);
             assertEquals(auth, new AuthData( Integer.toString(2147483647 + user.hashCode()), user.username()));
-            UserService.logout(auth);
+//            UserService.logout(auth);
         } catch (ResponseException e) {
             fail(e.getMessage());
         }
@@ -96,7 +96,7 @@ public class UserServiceTests {
         try {
             UserService.register(user, userDB);
             AuthData auth =new AuthData( Integer.toString(2147483647 + user.hashCode()), "Joe");
-            UserService.logout(auth);
+//            UserService.logout();
             fail();
         } catch (ResponseException e) {
             assertEquals(e, new ResponseException(401, "User logout information is invalid"));

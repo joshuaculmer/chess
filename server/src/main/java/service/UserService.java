@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.ResponseException;
 import model.AuthData;
@@ -24,7 +25,7 @@ public class UserService {
         return createAuth(user);
     }
 
-    public static void logout(AuthData auth) throws ResponseException{
+    public static void logout(AuthData auth, AuthDAO authDB) throws ResponseException{
         throw new ResponseException(500, "Not implemented");
     }
 
