@@ -13,16 +13,31 @@ public class UserService {
         if(userDB.getUserData(user.username()) != null ) { throw new ResponseException(403,"Username already taken");}
 
         userDB.addUserData(user);
-        return new AuthData("default", "default");
+        return createAuth(user);
 
     }
 
-    public static AuthData login(UserData user) {
-        return new AuthData("default", "default");
+    public static AuthData login(UserData user, UserDAO userDB) throws ResponseException{
+
+        if(userDB.getUserData(user.username()) == null) { throw new ResponseException(401, "User login information is invalid");}
+
+        return createAuth(user);
     }
 
     public static void logout(AuthData auth) {
 
     }
 
+    private static AuthData createAuth(UserData user) {
+        return new AuthData(makeAuthToken(user),user.username());
+    }
+
+    private static String makeAuthToken(UserData user) {
+        int randomNumber = (int) Math.floor(Math.random() * 1000000);
+
+        String result = "";
+        result += randomNumber + user.hashCode();
+
+        return result;
+    }
 }

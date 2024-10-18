@@ -32,7 +32,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         Spark.post("/user", this::registerUser);
-        Spark.post("/session", (req, res) -> printAndReturn("Login User Called"));
+        Spark.post("/session", this::loginUser);
         Spark.delete("/session", (req,res) -> printAndReturn("Logout User Called"));
         Spark.get("/game", (req, res) -> printAndReturn("List Games Called"));
         Spark.post("/game", (req, res) -> printAndReturn("Create Game Called"));
@@ -64,7 +64,16 @@ public class Server {
     }
 
     public Object loginUser(Request req, Response res) {
-        return null;
+        try {
+            UserData userData = new Gson().fromJson(req.body(), UserData.class);
+            AuthData authData=UserService.login(userData, userDB);
+            return new Gson().toJson(authData);
+        }
+        catch (ResponseException e) {
+            res.body(e.toString());
+            res.status(e.StatusCode());
+            return new Gson().toJson("Invalid UserData submitted");
+        }
     }
 
     public Object logOut(Request req, Response res) {
