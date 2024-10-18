@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.UserDAOMemory;
 import exception.ResponseException;
+import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,38 @@ public class UserServiceTests {
     }
 
     @Disabled
-    public void DatabaseInvalid() {
+    public void RegisterUserDBInvalid() {
         System.out.println("TODO");
+    }
+
+    @Test
+    public void SuccessLoginUser() {
+        UserDAOMemory userDB = new UserDAOMemory();
+        UserData user = new UserData("name", "pw", "mail");
+        try {
+            UserService.register(user, userDB);
+            AuthData result = UserService.login(user, userDB);
+            assertEquals(result, new AuthData( Integer.toString(2147483647 + user.hashCode()), user.username()));
+        } catch (ResponseException e) {
+            fail("");
+        }
+    }
+
+    @Test
+    public void LoginUserDBInvalid() {
+        UserDAOMemory userDB = new UserDAOMemory();
+        UserData user = new UserData("name", "pw", "mail");
+        try {
+            UserService.login(user, userDB);
+            fail("Did not throw error when User was not in DB");
+        } catch (ResponseException e) {
+            assertEquals(e, new ResponseException(401, "User login information is invalid"));
+        }
+    }
+
+    @Disabled
+    public void LoginUserInvalid() {
+        UserDAOMemory userDB = new UserDAOMemory(); // fail here
+        UserData user = new UserData("name", "pw", "mail");
     }
 }

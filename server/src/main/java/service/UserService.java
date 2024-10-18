@@ -33,7 +33,7 @@ public class UserService {
     }
 
     private static String makeAuthToken(UserData user) {
-        int randomNumber = (int) Math.floor(Math.random() * 1000000);
+        int randomNumber = 2147483647;
 
         String result = "";
         result += randomNumber + user.hashCode();
