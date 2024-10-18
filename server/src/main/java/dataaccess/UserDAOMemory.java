@@ -21,6 +21,6 @@ public class UserDAOMemory implements UserDAO{
 
     @Override
     public void clearUserData() {
-
+        dataBase.clear();
     }
 }
