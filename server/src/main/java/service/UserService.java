@@ -29,8 +29,11 @@ public class UserService {
     public AuthData login(UserData user) throws ResponseException{
 
         if(userDB.getUserData(user.username()) == null) { throw new ResponseException(401, "User login information is invalid");}
+        AuthData authData= createAuth(user);
+//        if(authDB.getAuthData(authData.authToken()) != null) { throw new ResponseException(403, "Already signed in");}
+        authDB.addAuthData(authData);
 
-        return createAuth(user);
+        return authData;
     }
 
     public void logout(AuthData auth) throws ResponseException{

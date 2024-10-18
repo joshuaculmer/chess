@@ -106,8 +106,6 @@ public class UserServiceTests {
         UserData user = new UserData("name", "pw", "mail");
         try {
             AuthData auth = testService.register(user);
-            AuthData authExpected =new AuthData( Integer.toString(2147483647 + user.hashCode()), "Joe");
-
             testService.logout(auth);
             fail();
         } catch (ResponseException e) {
