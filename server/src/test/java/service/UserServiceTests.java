@@ -52,12 +52,12 @@ public class UserServiceTests {
             AuthData result = UserService.login(user, userDB);
             assertEquals(result, new AuthData( Integer.toString(2147483647 + user.hashCode()), user.username()));
         } catch (ResponseException e) {
-            fail("");
+            fail("Could not log in User when supposed to");
         }
     }
 
     @Test
-    public void LoginUserDBInvalid() {
+    public void LoginUserInvalid() {
         UserDAOMemory userDB = new UserDAOMemory();
         UserData user = new UserData("name", "pw", "mail");
         try {
@@ -69,7 +69,42 @@ public class UserServiceTests {
     }
 
     @Disabled
-    public void LoginUserInvalid() {
+    public void LoginUserDBInvalid() {
+        UserDAOMemory userDB = new UserDAOMemory(); // fail here
+        UserData user = new UserData("name", "pw", "mail");
+    }
+
+
+    @Test
+    public void SuccessLogoutUser() {
+        UserDAOMemory userDB = new UserDAOMemory();
+        UserData user = new UserData("name", "pw", "mail");
+        try {
+            UserService.register(user, userDB);
+            AuthData auth = UserService.login(user, userDB);
+            assertEquals(auth, new AuthData( Integer.toString(2147483647 + user.hashCode()), user.username()));
+            UserService.logout(auth);
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void LogoutUserNotLoggedIn() {
+        UserDAOMemory userDB = new UserDAOMemory();
+        UserData user = new UserData("name", "pw", "mail");
+        try {
+            UserService.register(user, userDB);
+            AuthData auth =new AuthData( Integer.toString(2147483647 + user.hashCode()), "Joe");
+            UserService.logout(auth);
+            fail();
+        } catch (ResponseException e) {
+            assertEquals(e, new ResponseException(401, "User logout information is invalid"));
+        }
+    }
+
+    @Disabled
+    public void LogoutUserDBInvalid() {
         UserDAOMemory userDB = new UserDAOMemory(); // fail here
         UserData user = new UserData("name", "pw", "mail");
     }

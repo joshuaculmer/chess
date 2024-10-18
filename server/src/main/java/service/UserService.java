@@ -24,8 +24,8 @@ public class UserService {
         return createAuth(user);
     }
 
-    public static void logout(AuthData auth) {
-
+    public static void logout(AuthData auth) throws ResponseException{
+        throw new ResponseException(500, "Not implemented");
     }
 
     private static AuthData createAuth(UserData user) {
