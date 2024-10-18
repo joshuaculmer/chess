@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import dataaccess.UserDAOMemory;
+import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 import service.ClearService;
@@ -55,9 +56,9 @@ public class Server {
             AuthData authData=UserService.register(userData, userDB);
             return new Gson().toJson(authData);
         }
-        catch (RuntimeException e) {
+        catch (ResponseException e) {
             res.body(e.toString());
-            res.status(403);
+            res.status(e.StatusCode());
             return new Gson().toJson("Invalid UserData submitted");
         }
     }

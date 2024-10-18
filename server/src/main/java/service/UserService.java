@@ -1,15 +1,16 @@
 package service;
 
 import dataaccess.UserDAO;
+import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 
 public class UserService {
 
-    public static AuthData register(UserData user, UserDAO userDB) {
+    public static AuthData register(UserData user, UserDAO userDB) throws ResponseException {
 
-        if(!user.isValid()) { throw new RuntimeException("Invalid User Data, cannot add user");}
-        if(userDB.getUserData(user.username()) != null ) { throw new IllegalCallerException("User already in db");}
+        if(!user.isValid()) { throw new ResponseException(400,"Bad Request, Invalid User Data");}
+        if(userDB.getUserData(user.username()) != null ) { throw new ResponseException(403,"Username already taken");}
 
         userDB.addUserData(user);
         return new AuthData("default", "default");
