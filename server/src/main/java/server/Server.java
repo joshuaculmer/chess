@@ -1,9 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
-import dataaccess.UserDAOMemory;
+import dataaccess.*;
 import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
@@ -14,9 +12,10 @@ import spark.*;
 
 public class Server {
 
-    private UserDAO userDB;
-    private GameDAO gameDB;
-    private AuthData authDB;
+
+    private UserDAO userDB = new UserDAOMemory();
+    private AuthDAO authDB = new AuthDAOMemory();
+    UserService testService = new UserService(userDB, authDB);
 
     public String printAndReturn(String input) {
         System.out.println(input);
@@ -26,8 +25,6 @@ public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
-
-        userDB = new UserDAOMemory();
 
         // Register your endpoints and handle exceptions here.
 
@@ -53,7 +50,7 @@ public class Server {
     public Object registerUser(Request req, Response res) {
         try {
             UserData userData = new Gson().fromJson(req.body(), UserData.class);
-            AuthData authData=UserService.register(userData, userDB);
+            AuthData authData = testService.register(userData);
             return new Gson().toJson(authData);
         }
         catch (ResponseException e) {
@@ -66,7 +63,7 @@ public class Server {
     public Object loginUser(Request req, Response res) {
         try {
             UserData userData = new Gson().fromJson(req.body(), UserData.class);
-            AuthData authData=UserService.login(userData, userDB);
+            AuthData authData = testService.login(userData);
             return new Gson().toJson(authData);
         }
         catch (ResponseException e) {

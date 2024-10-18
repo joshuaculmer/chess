@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.AuthDAOMemory;
 import dataaccess.UserDAOMemory;
 import exception.ResponseException;
 import model.AuthData;
@@ -16,8 +17,9 @@ public class UserServiceTests {
     public void SuccessRegisterUser() {
         UserDAOMemory userDB = new UserDAOMemory();
         UserData user = new UserData("name", "pw", "mail");
+        UserService testService = new UserService(userDB, null);
         try {
-            UserService.register(user, userDB);
+            testService.register(user);
         } catch (ResponseException e) {
             fail("Could not register the user successfully, returned error" + e.toString());
         }
@@ -29,9 +31,10 @@ public class UserServiceTests {
     public void RegisterUserTwice() {
         UserDAOMemory userDB = new UserDAOMemory();
         UserData user = new UserData("name", "pw", "mail");
+        UserService testService = new UserService(userDB, null);
         try {
-            UserService.register(user, userDB);
-            UserService.register(user, userDB);
+            testService.register(user);
+            testService.register(user);
             fail("Did not throw an error for registering twice");
         } catch (ResponseException e) {
             assertEquals(e, new ResponseException(403, "Username already taken"));
@@ -46,10 +49,12 @@ public class UserServiceTests {
     @Test
     public void SuccessLoginUser() {
         UserDAOMemory userDB = new UserDAOMemory();
+        AuthDAOMemory authDB = new AuthDAOMemory();
+        UserService testService = new UserService(userDB, authDB);
         UserData user = new UserData("name", "pw", "mail");
         try {
-            UserService.register(user, userDB);
-            AuthData result = UserService.login(user, userDB);
+            testService.register(user);
+            AuthData result = testService.login(user);
             assertEquals(result, new AuthData( Integer.toString(2147483647 + user.hashCode()), user.username()));
         } catch (ResponseException e) {
             fail("Could not log in User when supposed to");
@@ -59,9 +64,11 @@ public class UserServiceTests {
     @Test
     public void LoginUserInvalid() {
         UserDAOMemory userDB = new UserDAOMemory();
+        AuthDAOMemory authDB = new AuthDAOMemory();
+        UserService testService = new UserService(userDB, authDB);
         UserData user = new UserData("name", "pw", "mail");
         try {
-            UserService.login(user, userDB);
+            testService.login(user);
             fail("Did not throw error when User was not in DB");
         } catch (ResponseException e) {
             assertEquals(e, new ResponseException(401, "User login information is invalid"));
@@ -78,10 +85,12 @@ public class UserServiceTests {
     @Test
     public void SuccessLogoutUser() {
         UserDAOMemory userDB = new UserDAOMemory();
+        AuthDAOMemory authDB = new AuthDAOMemory();
+        UserService testService = new UserService(userDB, authDB);
         UserData user = new UserData("name", "pw", "mail");
         try {
-            UserService.register(user, userDB);
-            AuthData auth = UserService.login(user, userDB);
+            testService.register(user);
+            AuthData auth = testService.login(user);
             assertEquals(auth, new AuthData( Integer.toString(2147483647 + user.hashCode()), user.username()));
 //            UserService.logout(auth);
         } catch (ResponseException e) {
@@ -92,11 +101,14 @@ public class UserServiceTests {
     @Test
     public void LogoutUserNotLoggedIn() {
         UserDAOMemory userDB = new UserDAOMemory();
+        AuthDAOMemory authDB = new AuthDAOMemory();
+        UserService testService = new UserService(userDB, authDB);
         UserData user = new UserData("name", "pw", "mail");
         try {
-            UserService.register(user, userDB);
-            AuthData auth =new AuthData( Integer.toString(2147483647 + user.hashCode()), "Joe");
-//            UserService.logout();
+            AuthData auth = testService.register(user);
+            AuthData authExpected =new AuthData( Integer.toString(2147483647 + user.hashCode()), "Joe");
+
+            testService.logout(auth);
             fail();
         } catch (ResponseException e) {
             assertEquals(e, new ResponseException(401, "User logout information is invalid"));

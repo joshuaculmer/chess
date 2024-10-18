@@ -8,7 +8,15 @@ import model.UserData;
 
 public class UserService {
 
-    public static AuthData register(UserData user, UserDAO userDB) throws ResponseException {
+    private UserDAO userDB;
+    private AuthDAO authDB;
+
+    public UserService(UserDAO userDB, AuthDAO authDB){
+        this.authDB = authDB;
+        this.userDB = userDB;
+    }
+
+    public AuthData register(UserData user) throws ResponseException {
 
         if(!user.isValid()) { throw new ResponseException(400,"Bad Request, Invalid User Data");}
         if(userDB.getUserData(user.username()) != null ) { throw new ResponseException(403,"Username already taken");}
@@ -18,22 +26,25 @@ public class UserService {
 
     }
 
-    public static AuthData login(UserData user, UserDAO userDB) throws ResponseException{
+    public AuthData login(UserData user) throws ResponseException{
 
         if(userDB.getUserData(user.username()) == null) { throw new ResponseException(401, "User login information is invalid");}
 
         return createAuth(user);
     }
 
-    public static void logout(AuthData auth, AuthDAO authDB) throws ResponseException{
+    public void logout(AuthData auth) throws ResponseException{
+        if(authDB.getAuthData(auth.authToken()) == null) { throw new ResponseException(401, "User logout information is invalid");}
+
+        authDB.removeAuthData(auth);
         throw new ResponseException(500, "Not implemented");
     }
 
-    private static AuthData createAuth(UserData user) {
+    private AuthData createAuth(UserData user) {
         return new AuthData(makeAuthToken(user),user.username());
     }
 
-    private static String makeAuthToken(UserData user) {
+    private String makeAuthToken(UserData user) {
         int randomNumber = 2147483647;
 
         String result = "";
