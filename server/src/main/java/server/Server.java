@@ -15,7 +15,8 @@ public class Server {
 
     private UserDAO userDB = new UserDAOMemory();
     private AuthDAO authDB = new AuthDAOMemory();
-    UserService testService = new UserService(userDB, authDB);
+    private GameDAO gameDB = new GameDAOMemory();
+    UserService userSerivceInstance = new UserService(userDB, authDB);
 
     public String printAndReturn(String input) {
         System.out.println(input);
@@ -34,7 +35,7 @@ public class Server {
         Spark.get("/game", (req, res) -> printAndReturn("List Games Called"));
         Spark.post("/game", (req, res) -> printAndReturn("Create Game Called"));
         Spark.put("/game", (req, res) -> printAndReturn("Join Game Called"));
-        Spark.delete("/db", (req, res) -> new Gson().toJson("Not implemented yet"));
+        Spark.delete("/db", this::clearAll);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -50,26 +51,26 @@ public class Server {
     public Object registerUser(Request req, Response res) {
         try {
             UserData userData = new Gson().fromJson(req.body(), UserData.class);
-            AuthData authData = testService.register(userData);
+            AuthData authData = userSerivceInstance.register(userData);
             return new Gson().toJson(authData);
         }
         catch (ResponseException e) {
             res.body(e.toString());
             res.status(e.StatusCode());
-            return new Gson().toJson("Invalid UserData submitted");
+            return new Gson().toJson(e.getMessage());
         }
     }
 
     public Object loginUser(Request req, Response res) {
         try {
             UserData userData = new Gson().fromJson(req.body(), UserData.class);
-            AuthData authData = testService.login(userData);
+            AuthData authData = userSerivceInstance.login(userData);
             return new Gson().toJson(authData);
         }
         catch (ResponseException e) {
             res.body(e.toString());
             res.status(e.StatusCode());
-            return new Gson().toJson("Invalid UserData submitted");
+            return new Gson().toJson(e.getMessage());
         }
     }
 
@@ -87,5 +88,18 @@ public class Server {
 
     public Object joinGame(Request req, Response res) {
         return null;
+    }
+
+    public Object clearAll(Request req, Response res) {
+        try {
+            ClearService.clearAll(userDB, authDB, gameDB);
+            return new Gson().toJson("Successfully cleared all DB");
+        }
+        catch (ResponseException e) {
+            res.body(e.toString());
+            res.status(e.StatusCode());
+            return new Gson().toJson(e.getMessage());
+        }
+
     }
 }
