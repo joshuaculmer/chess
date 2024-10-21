@@ -14,7 +14,7 @@ public class GameDAOMemory implements GameDAO{
 
     HashMap<Integer, GameData> dataBase = new HashMap<>();
 
-    public List<GameData> listGames() {
+    public ArrayList<GameData> listGames() {
         return new ArrayList<GameData>(dataBase.values());
     }
 
@@ -22,8 +22,8 @@ public class GameDAOMemory implements GameDAO{
         dataBase.put(game.gameID(), game);
     }
 
-    public GameData getGameDataByID(String gameID){
-        return new GameData(12345,"test","test","test",new ChessGame());
+    public GameData getGameDataByID(int gameID){
+        return dataBase.get(gameID);
     }
 
     public void clearGameData()
