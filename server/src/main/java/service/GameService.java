@@ -16,7 +16,7 @@ public class GameService {
     public GameService(AuthDAO authdb, GameDAO gamedb) {
         this.authDB = authdb;
         this.gameDB = gamedb;
-        gameIDCounter = 0;
+        gameIDCounter = 1;
     }
 
     public ArrayList<GameData> listGames(String authToken) throws ResponseException{
@@ -26,12 +26,12 @@ public class GameService {
         return (ArrayList<GameData>) gameDB.listGames();
     }
 
-    public String createGame(String authToken, String gameName) throws  ResponseException{
+    public int createGame(String authToken, String gameName) throws  ResponseException{
         AuthData confirmed = authDB.getAuthData(authToken);
         if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}
-
-        gameDB.addGame(new GameData(nextGameID(), null, null, gameName, new ChessGame()));
-        return "";
+        int gameID = nextGameID();
+        gameDB.addGame(new GameData(gameID, null, null, gameName, new ChessGame()));
+        return gameID;
     }
 
     public void joinGame() {

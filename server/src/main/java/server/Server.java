@@ -6,6 +6,7 @@ import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 import service.ClearService;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
@@ -16,6 +17,7 @@ public class Server {
     private AuthDAO authDB = new AuthDAOMemory();
     private GameDAO gameDB = new GameDAOMemory();
     UserService userSerivceInstance = new UserService(userDB, authDB);
+    GameService gameServiceInstance = new GameService(authDB, gameDB);
 
     public String printAndReturn(String input) {
         System.out.println(input);
@@ -31,8 +33,8 @@ public class Server {
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logOut);
-        Spark.get("/game", (req, res) -> printAndReturn("List Games Called"));
-        Spark.post("/game", (req, res) -> printAndReturn("Create Game Called"));
+        Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
         Spark.put("/game", (req, res) -> printAndReturn("Join Game Called"));
         Spark.delete("/db", this::clearAll);
         //This line initializes the server and can be removed once you have a functioning endpoint 
@@ -75,8 +77,8 @@ public class Server {
 
     public Object logOut(Request req, Response res) {
         try {
-            String auth = req.headers("Authorization");
-            userSerivceInstance.logout(auth);
+            String authToken = req.headers("Authorization");
+            userSerivceInstance.logout(authToken);
             return new Gson().toJson(null);
         }
         catch (ResponseException e) {
@@ -87,11 +89,28 @@ public class Server {
     }
 
     public Object listGames(Request req, Response res) {
-        return null;
+        try {
+            String authToken = req.headers("Authorization");
+            gameServiceInstance.listGames(authToken);
+            return new Gson().toJson(null);
+        }
+        catch (ResponseException e) {
+            res.body(e.toString());
+            res.status(e.StatusCode());
+            return e.messageToJSON();
+        }
     }
 
     public Object createGame(Request req, Response res) {
-        return null;
+        try {
+            String authToken = req.headers("Authorization");
+            return "{\"gameID\": " + gameServiceInstance.createGame(authToken, req.body()) + " }";
+        }
+        catch (ResponseException e) {
+            res.body(e.toString());
+            res.status(e.StatusCode());
+            return e.messageToJSON();
+        }
     }
 
     public Object joinGame(Request req, Response res) {
