@@ -41,8 +41,8 @@ public class UserService {
         return authData;
     }
 
-    public void logout(String auth) throws ResponseException{
-        AuthData confirmed = authDB.getAuthData(auth);
+    public void logout(String authToken) throws ResponseException{
+        AuthData confirmed = authDB.getAuthData(authToken);
         if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}
 
         authDB.removeAuthData(confirmed);
