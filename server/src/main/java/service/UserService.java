@@ -19,7 +19,7 @@ public class UserService {
     public AuthData register(UserData user) throws ResponseException {
 
         if(!user.isValid()) { throw new ResponseException(400,"Bad Request, Invalid User Data");}
-        if(userDB.getUserData(user.username()) != null ) { throw new ResponseException(403,"Username already taken");}
+        if(userDB.getUserData(user.username()) != null ) { throw new ResponseException(403,"Error: already taken");}
 
         userDB.addUserData(user);
         return createAuth(user);
@@ -28,7 +28,7 @@ public class UserService {
 
     public AuthData login(UserData user) throws ResponseException{
 
-        if(userDB.getUserData(user.username()) == null) { throw new ResponseException(401, "User login information is invalid");}
+        if(userDB.getUserData(user.username()) == null) { throw new ResponseException(401, "Error: unauthorized");}
         AuthData authData= createAuth(user);
 //        if(authDB.getAuthData(authData.authToken()) != null) { throw new ResponseException(403, "Already signed in");}
         authDB.addAuthData(authData);

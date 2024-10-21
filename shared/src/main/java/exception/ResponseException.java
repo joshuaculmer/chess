@@ -1,5 +1,7 @@
 package exception;
 
+import com.google.gson.Gson;
+
 public class ResponseException extends Exception {
 
     final private int statusCode;
@@ -24,5 +26,9 @@ public class ResponseException extends Exception {
     @Override
     public int hashCode() {
         return statusCode;
+    }
+
+    public String messageToJSON() {
+        return "{\"message\" : \"" + super.getMessage() + "\"}";
     }
 }

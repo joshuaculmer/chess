@@ -6,7 +6,6 @@ import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 import service.ClearService;
-import service.GameService;
 import service.UserService;
 import spark.*;
 
@@ -57,7 +56,7 @@ public class Server {
         catch (ResponseException e) {
             res.body(e.toString());
             res.status(e.StatusCode());
-            return new Gson().toJson(e.getMessage());
+            return e.messageToJSON();
         }
     }
 
@@ -70,7 +69,7 @@ public class Server {
         catch (ResponseException e) {
             res.body(e.toString());
             res.status(e.StatusCode());
-            return new Gson().toJson(e.getMessage());
+            return e.messageToJSON();
         }
     }
 
@@ -93,12 +92,12 @@ public class Server {
     public Object clearAll(Request req, Response res) {
         try {
             ClearService.clearAll(userDB, authDB, gameDB);
-            return new Gson().toJson("Successfully cleared all DB");
+            return new Gson().toJson(null);
         }
         catch (ResponseException e) {
             res.body(e.toString());
             res.status(e.StatusCode());
-            return new Gson().toJson(e.getMessage());
+            return e.messageToJSON();
         }
 
     }
