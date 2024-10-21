@@ -106,7 +106,7 @@ public class UserServiceTests {
         UserData user = new UserData("name", "pw", "mail");
         try {
             AuthData auth = testService.register(user);
-            testService.logout(auth);
+            testService.logout(auth.authToken());
             fail();
         } catch (ResponseException e) {
             assertEquals(e, new ResponseException(401, "User logout information is invalid"));

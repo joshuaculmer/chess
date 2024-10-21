@@ -30,7 +30,7 @@ public class Server {
 
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::loginUser);
-        Spark.delete("/session", (req,res) -> printAndReturn("Logout User Called"));
+        Spark.delete("/session", this::logOut);
         Spark.get("/game", (req, res) -> printAndReturn("List Games Called"));
         Spark.post("/game", (req, res) -> printAndReturn("Create Game Called"));
         Spark.put("/game", (req, res) -> printAndReturn("Join Game Called"));
@@ -74,7 +74,16 @@ public class Server {
     }
 
     public Object logOut(Request req, Response res) {
-        return null;
+        try {
+            String auth = req.headers("Authorization");
+            userSerivceInstance.logout(auth);
+            return new Gson().toJson(null);
+        }
+        catch (ResponseException e) {
+            res.body(e.toString());
+            res.status(e.StatusCode());
+            return e.messageToJSON();
+        }
     }
 
     public Object listGames(Request req, Response res) {
