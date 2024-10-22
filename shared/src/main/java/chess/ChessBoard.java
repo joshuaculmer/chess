@@ -12,13 +12,7 @@ import java.util.Arrays;
 public class ChessBoard {
 
     private ChessPiece[][] squares = new ChessPiece[8][8];
-    public ChessBoard() {
-        for(ChessPiece[] row: squares)
-        {
-            for(ChessPiece current:row)
-                current=null;
-        }
-    }
+    public ChessBoard() {}
 
     public ChessBoard(ChessBoard copyBoard){
         for(int row = 1; row <= 8; row++) {
@@ -59,9 +53,11 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        for(int i=0;i<8;i++)
-            for(int j=0;j<8;j++)
+        for(int i=0;i<8;i++) {
+            for (int j=0; j < 8; j++) {
                 squares[i][j]=null;
+            }
+        }
         addPiece(new ChessPosition(1,1), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(1,2), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(1,3), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));

@@ -104,14 +104,17 @@ public class ChessGame {
                     getBoard().addPiece(move.getEndPosition(), pieceToMove);
                     advanceTeamTurn();
                 }
-                else
+                else {
                     throw new InvalidMoveException("Move out of turn");
+                }
             }
-            else
+            else {
                 throw new InvalidMoveException("No piece at " + move.getStartPosition().toString());
+            }
         }
-        else
+        else {
             throw new InvalidMoveException(move.toString() + " is an illegal move");
+        }
     }
 
     /**
