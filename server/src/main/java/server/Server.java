@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.*;
 import exception.ResponseException;
@@ -35,8 +36,9 @@ public class Server {
         Spark.delete("/session", this::logOut);
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
-        Spark.put("/game", (req, res) -> printAndReturn("Join Game Called"));
+        Spark.put("/game", this::joinGame);
         Spark.delete("/db", this::clearAll);
+        Spark.exception(ResponseException.class, this::exceptionHandler);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -49,84 +51,56 @@ public class Server {
         Spark.awaitStop();
     }
 
-    public Object registerUser(Request req, Response res) {
-        try {
-            UserData userData = new Gson().fromJson(req.body(), UserData.class);
-            AuthData authData = userSerivceInstance.register(userData);
-            return new Gson().toJson(authData);
-        }
-        catch (ResponseException e) {
-            res.body(e.toString());
-            res.status(e.StatusCode());
-            return e.messageToJSON();
-        }
+    public Object registerUser(Request req, Response res) throws ResponseException {
+        UserData userData = new Gson().fromJson(req.body(), UserData.class);
+        AuthData authData = userSerivceInstance.register(userData);
+        return new Gson().toJson(authData);
     }
 
-    public Object loginUser(Request req, Response res) {
-        try {
-            UserData userData = new Gson().fromJson(req.body(), UserData.class);
-            AuthData authData = userSerivceInstance.login(userData);
-            return new Gson().toJson(authData);
-        }
-        catch (ResponseException e) {
-            res.body(e.toString());
-            res.status(e.StatusCode());
-            return e.messageToJSON();
-        }
+    public Object loginUser(Request req, Response res) throws ResponseException{
+        UserData userData = new Gson().fromJson(req.body(), UserData.class);
+        AuthData authData = userSerivceInstance.login(userData);
+        return new Gson().toJson(authData);
     }
 
-    public Object logOut(Request req, Response res) {
-        try {
-            String authToken = req.headers("Authorization");
-            userSerivceInstance.logout(authToken);
-            return new Gson().toJson(null);
-        }
-        catch (ResponseException e) {
-            res.body(e.toString());
-            res.status(e.StatusCode());
-            return e.messageToJSON();
-        }
+    public Object logOut(Request req, Response res) throws ResponseException{
+        String authToken = req.headers("Authorization");
+        userSerivceInstance.logout(authToken);
+        return new Gson().toJson(null);
     }
 
-    public Object listGames(Request req, Response res) {
-        try {
-            String authToken = req.headers("Authorization");
-            gameServiceInstance.listGames(authToken);
-            return new Gson().toJson(null);
-        }
-        catch (ResponseException e) {
-            res.body(e.toString());
-            res.status(e.StatusCode());
-            return e.messageToJSON();
-        }
+    public Object listGames(Request req, Response res) throws ResponseException {
+        String authToken = req.headers("Authorization");
+        gameServiceInstance.listGames(authToken);
+        return new Gson().toJson(null);
     }
 
-    public Object createGame(Request req, Response res) {
-        try {
-            String authToken = req.headers("Authorization");
-            return "{\"gameID\": " + gameServiceInstance.createGame(authToken, req.body()) + " }";
-        }
-        catch (ResponseException e) {
-            res.body(e.toString());
-            res.status(e.StatusCode());
-            return e.messageToJSON();
-        }
+    public Object createGame(Request req, Response res) throws ResponseException{
+        String authToken = req.headers("Authorization");
+        return "{\"gameID\": " + gameServiceInstance.createGame(authToken, req.body()) + " }";
     }
 
-    public Object joinGame(Request req, Response res) {
-        return null;
+    public Object joinGame(Request req, Response res) throws ResponseException{
+        String authToken = req.headers("Authorization");
+        String body = req.body();
+
+        class JoinRequest{
+            public ChessGame.TeamColor playerColor;
+            public int gameID;
+        }
+
+        JoinRequest joinRequest  = new Gson().fromJson(req.body(), JoinRequest.class);
+        gameServiceInstance.joinGame(authToken, joinRequest.playerColor, joinRequest.gameID);
+        return new Gson().toJson(null);
     }
 
-    public Object clearAll(Request req, Response res) {
-        try {
-            ClearService.clearAll(userDB, authDB, gameDB);
-            return new Gson().toJson(null);
-        }
-        catch (ResponseException e) {
-            res.body(e.toString());
-            res.status(e.StatusCode());
-            return e.messageToJSON();
-        }
+    public Object clearAll(Request req, Response res) throws ResponseException{
+        ClearService.clearAll(userDB, authDB, gameDB);
+        return new Gson().toJson(null);
+    }
 
+    private void exceptionHandler(ResponseException e, Request req, Response res) {
+        res.body(e.messageToJSON());
+        res.status(e.StatusCode());
     }
 }
