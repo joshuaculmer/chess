@@ -8,8 +8,7 @@ import model.UserData;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
 
@@ -22,7 +21,7 @@ public class UserServiceTests {
         try {
             testService.register(user);
         } catch (ResponseException e) {
-            fail("Could not register the user successfully, returned error" + e.toString());
+            fail("Could not register the user successfully, returned error" + e);
         }
         UserData result = userDB.getUserData(user.username());
         assertEquals(result, user);
@@ -56,8 +55,9 @@ public class UserServiceTests {
         UserData user = new UserData("name", "pw", "mail");
         try {
             testService.register(user);
-            AuthData result = testService.login(user);
-            assertEquals(result, new AuthData( Integer.toString(2147483647 + user.hashCode()), user.username()));
+            var result = testService.login(user);
+            assertNotNull(result);
+            assert(result.getClass() == AuthData.class);
         } catch (ResponseException e) {
             fail("Could not log in User when supposed to");
         }
@@ -92,9 +92,10 @@ public class UserServiceTests {
         UserData user = new UserData("name", "pw", "mail");
         try {
             testService.register(user);
-            AuthData auth = testService.login(user);
-            assertEquals(auth, new AuthData( Integer.toString(2147483647 + user.hashCode()), user.username()));
-//            UserService.logout(auth);
+            AuthData result = testService.login(user);
+            assertNotNull(result);
+            assert(result.getClass() == AuthData.class);
+            testService.logout(result.authToken());
         } catch (ResponseException e) {
             fail(e.getMessage());
         }

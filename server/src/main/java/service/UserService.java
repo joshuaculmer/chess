@@ -7,6 +7,7 @@ import model.AuthData;
 import model.UserData;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class UserService {
 
@@ -53,11 +54,6 @@ public class UserService {
     }
 
     private String makeAuthToken(UserData user) {
-        int randomNumber = 2147483647;
-
-        String result = "";
-        result += randomNumber + user.hashCode();
-
-        return result;
+        return UUID.randomUUID().toString();
     }
 }
