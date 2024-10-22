@@ -93,30 +93,36 @@ public class ChessPiece {
     {
         // Move takes this piece out of bounds, therefore inValid
         ChessPosition endPos = move.getEndPosition();
-        if(!endPos.isOnBoard())
+        if(!endPos.isOnBoard()) {
             return false;
+        }
 
         // Pawn move validation checking
         else if(getPieceType() == PieceType.PAWN) {
             if(endPos.getColumn() == move.getStartPosition().getColumn())
             {
                 // Moving up/down a column is ok if we move into an empty spot only
-                if(board.getPiece(endPos) == null)
-                    return isPathEmpty(board,move.getStartPosition(),endPos);;
+                if(board.getPiece(endPos) == null) {
+                    return isPathEmpty(board, move.getStartPosition(), endPos);
+                }
             }
             // not moving just up or down the column, therefore we must attack something
             // attacking nothing is invalid
-            else if(board.getPiece(endPos)==null)
+            else if(board.getPiece(endPos)==null) {
                 return false;
-            else if(board.getPiece(endPos).getTeamColor() != getTeamColor())
+            }
+            else if(board.getPiece(endPos).getTeamColor() != getTeamColor()) {
                 return true;
-            else
+            }
+            else {
                 return false;
+            }
         }
 
         // endPos is empty or this piece attacks an opponent
-        else if(board.getPiece(endPos) == null || board.getPiece(endPos).getTeamColor() != getTeamColor())
-            return isPathEmpty(board,move.getStartPosition(),endPos);
+        else if(board.getPiece(endPos) == null || board.getPiece(endPos).getTeamColor() != getTeamColor()) {
+            return isPathEmpty(board, move.getStartPosition(), endPos);
+        }
         // endPos has a piece of our color on it already
         return false;
     }
@@ -127,23 +133,31 @@ public class ChessPiece {
     {
         // if col is the same check all rows
         if(start.getColumn()==end.getColumn()) {
-            for (int row=start.getRow()+1; row < end.getRow(); row++)
-                if (board.getPiece(new ChessPosition(row, start.getColumn())) != null)
+            for (int row=start.getRow()+1; row < end.getRow(); row++) {
+                if (board.getPiece(new ChessPosition(row, start.getColumn())) != null) {
                     return false;
-            for (int row=end.getRow()+1; row < start.getRow(); row++)
-                if (board.getPiece(new ChessPosition(row, start.getColumn())) != null)
+                }
+            }
+            for (int row=end.getRow()+1; row < start.getRow(); row++) {
+                if (board.getPiece(new ChessPosition(row, start.getColumn())) != null) {
                     return false;
+                }
+            }
             return true;
         }
         // if row is the same check all col
         if(start.getRow()==end.getRow())
         {
-            for(int col=start.getColumn()+1; col < end.getColumn(); col++)
-                if (board.getPiece(new ChessPosition(start.getRow(), col)) != null)
+            for(int col=start.getColumn()+1; col < end.getColumn(); col++) {
+                if (board.getPiece(new ChessPosition(start.getRow(), col)) != null) {
                     return false;
-            for(int col=end.getColumn()+1; col < start.getColumn(); col++)
-                if (board.getPiece(new ChessPosition(start.getRow(), col)) != null)
+                }
+            }
+            for(int col=end.getColumn()+1; col < start.getColumn(); col++) {
+                if (board.getPiece(new ChessPosition(start.getRow(), col)) != null) {
                     return false;
+                }
+            }
             return true;
         }
 
@@ -157,8 +171,9 @@ public class ChessPiece {
             while(row!=end.getRow()-rowIncrement) {
                 row+=rowIncrement;
                 col+=colIncrement;
-                if(board.getPiece(new ChessPosition(row, col))!=null)
+                if(board.getPiece(new ChessPosition(row, col))!=null) {
                     return false;
+                }
             }
         }
         return true;
@@ -186,8 +201,9 @@ public class ChessPiece {
         int col = position.getColumn();
 
         if(this.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            if (row == 2)
+            if (row == 2) {
                 allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row + 2, col), null));
+            }
             // All possible moves if this pawn can be promoted
             if (row + 1 == 8) {
                 for (PieceType promoPiece : PieceType.values()) {
@@ -204,8 +220,9 @@ public class ChessPiece {
             }
         }
         else if(this.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            if (row == 7)
+            if (row == 7) {
                 allPossiblePawnMoves.add(new ChessMove(position, new ChessPosition(row - 2, col), null));
+            }
             // All possible moves if this pawn can be promoted
             if (row - 1 == 1) {
                 for (PieceType promoPiece : PieceType.values()) {
@@ -279,21 +296,29 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        if(getPieceType() == PieceType.KNIGHT)
+        if(getPieceType() == PieceType.KNIGHT) {
             return getTeamColor() == ChessGame.TeamColor.WHITE ? "N" : "n";
-
-        if(getTeamColor() == ChessGame.TeamColor.WHITE)
-            return type.toString().substring(0,1);
-        else
-            return type.toString().substring(0,1).toLowerCase();
+        }
+        if(getTeamColor() == ChessGame.TeamColor.WHITE) {
+            return type.toString().substring(0, 1);
+        }
+        else {
+            return type.toString().substring(0, 1).toLowerCase();
+        }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessPiece that=(ChessPiece) o;
-        if (type != that.type) return false;
+        if (type != that.type) {
+            return false;
+        }
         return color == that.color;
     }
 
