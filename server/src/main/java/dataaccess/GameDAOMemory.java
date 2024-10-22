@@ -28,6 +28,6 @@ public class GameDAOMemory implements GameDAO{
 
     public void clearGameData()
     {
-        System.out.println("Todo");
+        dataBase.clear();
     }
 }
