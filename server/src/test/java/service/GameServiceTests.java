@@ -105,4 +105,70 @@ public class GameServiceTests {
 
     }
 
+
+    @Test
+    public void JoinGameU() throws  ResponseException {
+        AuthDAO authDB = new AuthDAOMemory();
+        authDB.addAuthData(new AuthData("12345","default"));
+        authDB.addAuthData(new AuthData("54321", "other"));
+        GameDAO gameDB = new GameDAOMemory();
+        GameService testService = new GameService(authDB, gameDB);
+        try{
+            testService.createGame("12345", "Jerry");
+            testService.joinGame("12345", ChessGame.TeamColor.WHITE, 1);
+            testService.joinGame("54321", ChessGame.TeamColor.BLACK, 1);
+        }
+        catch (ResponseException e){
+            fail();
+        }
+    }
+
+    @Test
+    public void JoinGameUnauthorized() throws  ResponseException {
+        AuthDAO authDB = new AuthDAOMemory();
+        authDB.addAuthData(new AuthData("12345","default"));
+        GameDAO gameDB = new GameDAOMemory();
+        GameService testService = new GameService(authDB, gameDB);
+        try{
+            testService.createGame("12345", "Jerry");
+            testService.joinGame("1234", ChessGame.TeamColor.WHITE, 1);
+        }
+        catch (ResponseException e){
+            assertEquals(e, new ResponseException(401, "Error: Unauthorized"));
+        }
+    }
+
+    @Test
+    public void JoinGameWhiteInAlready() throws  ResponseException {
+        AuthDAO authDB = new AuthDAOMemory();
+        authDB.addAuthData(new AuthData("12345","default"));
+        authDB.addAuthData(new AuthData("54321", "other"));
+        GameDAO gameDB = new GameDAOMemory();
+        GameService testService = new GameService(authDB, gameDB);
+        try{
+            testService.createGame("12345", "Jerry");
+            testService.joinGame("12345", ChessGame.TeamColor.WHITE, 1);
+            testService.joinGame("54321", ChessGame.TeamColor.WHITE, 1);
+        }
+        catch (ResponseException e){
+            assertEquals(e, new ResponseException(403, "Error: already taken"));
+        }
+    }
+
+    @Test
+    public void JoinGameBlackInAlready() throws  ResponseException {
+        AuthDAO authDB = new AuthDAOMemory();
+        authDB.addAuthData(new AuthData("12345","default"));
+        authDB.addAuthData(new AuthData("54321", "other"));
+        GameDAO gameDB = new GameDAOMemory();
+        GameService testService = new GameService(authDB, gameDB);
+        try{
+            testService.createGame("12345", "Jerry");
+            testService.joinGame("12345", ChessGame.TeamColor.BLACK, 1);
+            testService.joinGame("54321", ChessGame.TeamColor.BLACK, 1);
+        }
+        catch (ResponseException e){
+            assertEquals(e, new ResponseException(403, "Error: already taken"));
+        }
+    }
 }

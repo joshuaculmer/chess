@@ -34,8 +34,23 @@ public class GameService {
         return gameID;
     }
 
-    public void joinGame() {
-
+    public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws ResponseException{
+        AuthData confirmed = authDB.getAuthData(authToken);
+        if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}
+        GameData gameData = gameDB.getGameDataByID(gameID);
+        switch(color){
+            case WHITE -> {
+                if(gameData.whiteUsername() != null) {throw new ResponseException(403, "Error: already taken");}
+                gameData = new GameData(gameID, confirmed.username(), gameData.blackUsername(),
+                        gameData.gameName(), gameData.game());
+            }
+            case BLACK -> {
+                if(gameData.blackUsername() != null) {throw new ResponseException(403, "Error: already taken");}
+                gameData = new GameData(gameID, gameData.whiteUsername(), confirmed.username(),
+                        gameData.gameName(), gameData.game());
+            }
+        }
+        gameDB.addGame(gameData);
     }
 
     public int nextGameID() {
