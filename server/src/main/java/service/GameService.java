@@ -38,6 +38,7 @@ public class GameService {
         AuthData confirmed = authDB.getAuthData(authToken);
         if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}
         GameData gameData = gameDB.getGameDataByID(gameID);
+        if(gameData == null || color == null) { throw new ResponseException(400, "Error: bad request");}
         switch(color){
             case WHITE -> {
                 if(gameData.whiteUsername() != null) {throw new ResponseException(403, "Error: already taken");}
@@ -49,6 +50,7 @@ public class GameService {
                 gameData = new GameData(gameID, gameData.whiteUsername(), confirmed.username(),
                         gameData.gameName(), gameData.game());
             }
+            default -> throw new ResponseException(400, "Error: bad request");
         }
         gameDB.addGame(gameData);
     }

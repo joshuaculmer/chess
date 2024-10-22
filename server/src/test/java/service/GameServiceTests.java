@@ -107,7 +107,7 @@ public class GameServiceTests {
 
 
     @Test
-    public void JoinGameU() throws  ResponseException {
+    public void JoinGame() throws  ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         authDB.addAuthData(new AuthData("54321", "other"));

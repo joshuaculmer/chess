@@ -16,8 +16,9 @@ public class UserServiceTests {
     @Test
     public void SuccessRegisterUser() {
         UserDAOMemory userDB = new UserDAOMemory();
+        AuthDAOMemory authDB = new AuthDAOMemory();
         UserData user = new UserData("name", "pw", "mail");
-        UserService testService = new UserService(userDB, null);
+        UserService testService = new UserService(userDB, authDB);
         try {
             testService.register(user);
         } catch (ResponseException e) {
@@ -30,8 +31,9 @@ public class UserServiceTests {
     @Test
     public void RegisterUserTwice() {
         UserDAOMemory userDB = new UserDAOMemory();
+        AuthDAOMemory authDB = new AuthDAOMemory();
         UserData user = new UserData("name", "pw", "mail");
-        UserService testService = new UserService(userDB, null);
+        UserService testService = new UserService(userDB, authDB);
         try {
             testService.register(user);
             testService.register(user);
@@ -106,6 +108,7 @@ public class UserServiceTests {
         UserData user = new UserData("name", "pw", "mail");
         try {
             AuthData auth = testService.register(user);
+            testService.logout(auth.authToken());
             testService.logout(auth.authToken());
             fail();
         } catch (ResponseException e) {

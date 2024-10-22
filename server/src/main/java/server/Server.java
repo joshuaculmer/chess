@@ -71,8 +71,7 @@ public class Server {
 
     public Object listGames(Request req, Response res) throws ResponseException {
         String authToken = req.headers("Authorization");
-        gameServiceInstance.listGames(authToken);
-        return new Gson().toJson(null);
+        return "{ \"games\": " + new Gson().toJson(gameServiceInstance.listGames(authToken)) + "}";
     }
 
     public Object createGame(Request req, Response res) throws ResponseException{
@@ -82,12 +81,8 @@ public class Server {
 
     public Object joinGame(Request req, Response res) throws ResponseException{
         String authToken = req.headers("Authorization");
-        String body = req.body();
 
-        class JoinRequest{
-            public ChessGame.TeamColor playerColor;
-            public int gameID;
-        }
+        record JoinRequest (ChessGame.TeamColor playerColor, int gameID){}
 
         JoinRequest joinRequest  = new Gson().fromJson(req.body(), JoinRequest.class);
         gameServiceInstance.joinGame(authToken, joinRequest.playerColor, joinRequest.gameID);
