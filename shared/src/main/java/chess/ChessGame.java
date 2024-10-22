@@ -71,8 +71,9 @@ public class ChessGame {
             }
             return movesList;
         }
-        else
+        else {
             return null;
+        }
     }
 
     private void advanceTeamTurn(){
@@ -97,8 +98,9 @@ public class ChessGame {
             if (pieceToMove != null) {
                 if (pieceToMove.getTeamColor() == getTeamTurn()) {
                     pieceToMove = getBoard().removePiece(move.getStartPosition());
-                    if(move.getPromotionPiece() != null)
-                        pieceToMove = new ChessPiece(pieceToMove.getTeamColor(), move.getPromotionPiece());
+                    if(move.getPromotionPiece() != null) {
+                        pieceToMove=new ChessPiece(pieceToMove.getTeamColor(), move.getPromotionPiece());
+                    }
                     getBoard().addPiece(move.getEndPosition(), pieceToMove);
                     advanceTeamTurn();
                 }
@@ -124,8 +126,9 @@ public class ChessGame {
         opponentMoveList = TeamColor.WHITE == teamColor ? allPossibleTeamMoves(TeamColor.BLACK) : allPossibleTeamMoves(TeamColor.WHITE);
 
         for(ChessMove move : opponentMoveList) {
-            if(move.getEndPosition().equals(getKingPos(teamColor)))
+            if(move.getEndPosition().equals(getKingPos(teamColor))) {
                 return true;
+            }
         }
         return false;
     }
@@ -192,7 +195,7 @@ public class ChessGame {
             for(int col = 1; col <= 8; col++) {
                 ChessPiece currentPiece = getBoard().getPiece(new ChessPosition(row,col));
                 if(currentPiece != null && currentPiece.getTeamColor() == color) {
-                    movesList.addAll(currentPiece.pieceMoves(board, new ChessPosition(row,col))); // Error here where WHITE  rook is not adding a move to hit the black king, which does not register as still in check when the rook moves
+                    movesList.addAll(currentPiece.pieceMoves(board, new ChessPosition(row,col)));
                 }
             }
         }
@@ -203,24 +206,13 @@ public class ChessGame {
         for(int row = 1; row <= 8; row++) {
             for(int col = 1; col <= 8; col++) {
                 ChessPiece currentPiece = getBoard().getPiece(new ChessPosition(row,col));
-                if(currentPiece != null && currentPiece.getTeamColor() == color && currentPiece.getPieceType() == ChessPiece.PieceType.KING)
-                    return new ChessPosition(row,col);
+                if(currentPiece != null && currentPiece.getTeamColor() == color && currentPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    return new ChessPosition(row, col);
+                }
             }
         }
         return null; // this should throw an exception, but the game should always have a king for both sides
     }
-
-//    private boolean kingHasSafeMoves(TeamColor color){
-//        Collection<ChessMove> kingMoveList;
-//        kingMoveList = validMoves(getKingPos(color));
-//
-//        for(ChessMove move : kingMoveList){
-//            if (!moveIntoCheck(move, color)){
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
 
     private boolean moveIntoCheck(ChessMove move, TeamColor color) {
@@ -228,7 +220,9 @@ public class ChessGame {
         ChessBoard originalBoard = new ChessBoard(getBoard());
         ChessPosition kingPosition = getKingPos(color);
         if(kingPosition == null)  // Test case for when there is no king on the board, king can't be in check if not there
+        {
             return false;
+        }
         tempBoard.addPiece(move.getEndPosition(), tempBoard.removePiece(move.getStartPosition()));
         board = tempBoard;
         if(isInCheck(color)){

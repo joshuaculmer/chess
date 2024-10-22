@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class UserDAOTests {
 
     @Test
-    public void GetUserDataNoDataMemory() {
+    public void getUserDataNoDataMemory() {
 
         UserData expected = new UserData("default", "pw", "example");
         UserDAOMemory testdb = new UserDAOMemory();
@@ -20,7 +20,7 @@ public class UserDAOTests {
     }
 
     @Test
-    public void SuccessGetUserDataMemory() {
+    public void successGetUserDataMemory() {
 
         UserData expected = new UserData("default", "pw", "example");
         UserDAOMemory testdb = new UserDAOMemory();
@@ -30,7 +30,7 @@ public class UserDAOTests {
     }
 
     @Test
-    public void ClearUserDataMemory() {
+    public void clearUserDataMemory() {
         UserData value1 = new UserData("default", "pw", "example");
         UserData value2 = new UserData("test", "other", "gmail");
         UserDAOMemory testdb = new UserDAOMemory();

@@ -11,14 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GameDAOTests {
 
     @Test
-    public void GetGameDataNoDataMemory() {
+    public void getGameDataNoDataMemory() {
         GameDAO testdb = new GameDAOMemory();
         testdb.listGames();
         assert(testdb.listGames().isEmpty());
     }
 
     @Test
-    public void AddGameToDB() {
+    public void addGameToDB() {
         GameDAO testdb = new GameDAOMemory();
         testdb.listGames();
         assert(testdb.listGames().isEmpty());
@@ -28,7 +28,7 @@ public class GameDAOTests {
     }
 
     @Test
-    public void GetGameFromDB() {
+    public void getGameFromDB() {
         GameDAO testdb = new GameDAOMemory();
         testdb.listGames();
         assert(testdb.listGames().isEmpty());
@@ -37,6 +37,4 @@ public class GameDAOTests {
         assert(!testdb.listGames().isEmpty());
         assertEquals(testData, testdb.getGameDataByID(1));
     }
-
-
 }

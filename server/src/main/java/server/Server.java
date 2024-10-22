@@ -20,11 +20,6 @@ public class Server {
     UserService userSerivceInstance = new UserService(userDB, authDB);
     GameService gameServiceInstance = new GameService(authDB, gameDB);
 
-    public String printAndReturn(String input) {
-        System.out.println(input);
-        return input;
-    }
-
     public int run(int desiredPort) {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
@@ -96,6 +91,6 @@ public class Server {
 
     private void exceptionHandler(ResponseException e, Request req, Response res) {
         res.body(e.messageToJSON());
-        res.status(e.StatusCode());
+        res.status(e.statusCode());
     }
 }

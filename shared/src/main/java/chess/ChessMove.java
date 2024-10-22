@@ -57,11 +57,19 @@ public class ChessMove {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessMove chessMove=(ChessMove) o;
-        if (!Objects.equals(start, chessMove.start)) return false;
-        if (!Objects.equals(end, chessMove.end)) return false;
+        if (!Objects.equals(start, chessMove.start)) {
+            return false;
+        }
+        if (!Objects.equals(end, chessMove.end)) {
+            return false;
+        }
         return promotionPiece == chessMove.promotionPiece;
     }
 

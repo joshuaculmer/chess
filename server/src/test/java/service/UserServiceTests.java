@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTests {
 
     @Test
-    public void SuccessRegisterUser() {
+    public void successRegisterUser() {
         UserDAOMemory userDB = new UserDAOMemory();
         AuthDAOMemory authDB = new AuthDAOMemory();
         UserData user = new UserData("name", "pw", "mail");
@@ -28,7 +28,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void RegisterUserTwice() {
+    public void registerUserTwice() {
         UserDAOMemory userDB = new UserDAOMemory();
         AuthDAOMemory authDB = new AuthDAOMemory();
         UserData user = new UserData("name", "pw", "mail");
@@ -42,13 +42,8 @@ public class UserServiceTests {
         }
     }
 
-    @Disabled
-    public void RegisterUserDBInvalid() {
-        System.out.println("TODO");
-    }
-
     @Test
-    public void SuccessLoginUser() {
+    public void successLoginUser() {
         UserDAOMemory userDB = new UserDAOMemory();
         AuthDAOMemory authDB = new AuthDAOMemory();
         UserService testService = new UserService(userDB, authDB);
@@ -64,7 +59,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void LoginUserInvalid() {
+    public void loginUserInvalid() {
         UserDAOMemory userDB = new UserDAOMemory();
         AuthDAOMemory authDB = new AuthDAOMemory();
         UserService testService = new UserService(userDB, authDB);
@@ -77,15 +72,9 @@ public class UserServiceTests {
         }
     }
 
-    @Disabled
-    public void LoginUserDBInvalid() {
-        UserDAOMemory userDB = new UserDAOMemory(); // fail here
-        UserData user = new UserData("name", "pw", "mail");
-    }
-
 
     @Test
-    public void SuccessLogoutUser() {
+    public void successLogoutUser() {
         UserDAOMemory userDB = new UserDAOMemory();
         AuthDAOMemory authDB = new AuthDAOMemory();
         UserService testService = new UserService(userDB, authDB);
@@ -102,7 +91,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void LogoutUserNotLoggedIn() {
+    public void logoutUserNotLoggedIn() {
         UserDAOMemory userDB = new UserDAOMemory();
         AuthDAOMemory authDB = new AuthDAOMemory();
         UserService testService = new UserService(userDB, authDB);
@@ -115,11 +104,5 @@ public class UserServiceTests {
         } catch (ResponseException e) {
             assertEquals(e, new ResponseException(401, "User logout information is invalid"));
         }
-    }
-
-    @Disabled
-    public void LogoutUserDBInvalid() {
-        UserDAOMemory userDB = new UserDAOMemory(); // fail here
-        UserData user = new UserData("name", "pw", "mail");
     }
 }

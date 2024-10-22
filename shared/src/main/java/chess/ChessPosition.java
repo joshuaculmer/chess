@@ -42,12 +42,18 @@ public class ChessPosition {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ChessPosition that=(ChessPosition) o;
 
-        if (row != that.row) return false;
+        if (row != that.row) {
+            return false;
+        }
         return col == that.col;
     }
 
@@ -73,9 +79,11 @@ public class ChessPosition {
         ChessPosition testC=new ChessPosition(3,3);
         System.out.print(testA);
         System.out.println(testB);
-        if(testA.equals(testB))
-            System.out.printf("%s = %s%n",testA,testB);
-        if(testA.equals(testC))
-            System.out.printf("%s = %s%n :/",testA,testB);
+        if(testA.equals(testB)) {
+            System.out.printf("%s = %s%n", testA, testB);
+        }
+        if(testA.equals(testC)) {
+            System.out.printf("%s = %s%n :/", testA, testB);
+        }
     }
 }

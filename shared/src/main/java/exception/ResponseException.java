@@ -1,7 +1,5 @@
 package exception;
 
-import com.google.gson.Gson;
-
 public class ResponseException extends Exception {
 
     final private int statusCode;
@@ -11,7 +9,7 @@ public class ResponseException extends Exception {
         this.statusCode = statusCode;
     }
 
-    public int StatusCode() {return statusCode;}
+    public int statusCode() {return statusCode;}
 
     @Override
     public boolean equals(Object o) {

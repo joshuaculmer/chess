@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class GameServiceTests {
 
     @Test
-    public void ListEmptyDB() throws ResponseException {
+    public void listEmptyDB() throws ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         GameDAO gameDB = new GameDAOMemory();
@@ -27,7 +27,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void ListEmptyDBUnauthorized() throws ResponseException {
+    public void listEmptyDBUnauthorized() throws ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         GameDAO gameDB = new GameDAOMemory();
@@ -40,23 +40,8 @@ public class GameServiceTests {
         }
     }
 
-//    @Test
-//    public void AddGameToDB() throws ResponseException {
-//        AuthDAO authDB = new AuthDAOMemory();
-//        authDB.addAuthData(new AuthData("12345","default"));
-//        GameDAO gameDB = new GameDAOMemory();
-//        GameService testService = new GameService(authDB, gameDB);
-//        try{
-//            testService.
-//            testService.listGames("1234");
-//        }
-//        catch (ResponseException e){
-//            assertEquals(e, new ResponseException(401, "Error: Unauthorized"));
-//        }
-//    }
-
     @Test
-    public void AddGameToDB() throws ResponseException {
+    public void addGameToDB() throws ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         GameDAO gameDB = new GameDAOMemory();
@@ -71,7 +56,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void AddGameToDBUnauthorized() throws ResponseException {
+    public void addGameToDBUnauthorized() throws ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         GameDAO gameDB = new GameDAOMemory();
@@ -85,7 +70,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void ListAddedGames() throws ResponseException {
+    public void listAddedGames() throws ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         GameDAO gameDB = new GameDAOMemory();
@@ -107,7 +92,7 @@ public class GameServiceTests {
 
 
     @Test
-    public void JoinGame() throws  ResponseException {
+    public void joinGame() throws  ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         authDB.addAuthData(new AuthData("54321", "other"));
@@ -124,7 +109,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void JoinGameUnauthorized() throws  ResponseException {
+    public void joinGameUnauthorized() throws  ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         GameDAO gameDB = new GameDAOMemory();
@@ -139,7 +124,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void JoinGameWhiteInAlready() throws  ResponseException {
+    public void joinGameWhiteInAlready() throws  ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         authDB.addAuthData(new AuthData("54321", "other"));
@@ -156,7 +141,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void JoinGameBlackInAlready() throws  ResponseException {
+    public void joinGameBlackInAlready() throws  ResponseException {
         AuthDAO authDB = new AuthDAOMemory();
         authDB.addAuthData(new AuthData("12345","default"));
         authDB.addAuthData(new AuthData("54321", "other"));

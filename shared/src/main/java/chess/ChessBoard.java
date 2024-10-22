@@ -106,11 +106,12 @@ public class ChessBoard {
         for(int i=7;i>=0;i--) {
             boardRepresentation+=Integer.toString(i+1);
             for (int j=0; j < 8; j++) {
-
-                if (squares[i][j] != null)
+                if (squares[i][j] != null) {
                     boardRepresentation+=squares[i][j].toString() + "|";
-                else
+                }
+                else {
                     boardRepresentation+=" |";
+                }
             }
             boardRepresentation+=System.lineSeparator();
         }
@@ -119,8 +120,12 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessBoard that=(ChessBoard) o;
         return Arrays.deepEquals(squares, that.squares);
     }

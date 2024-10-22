@@ -12,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class AuthDAOTests {
 
     @Test
-    public void GetAuthDataNoDataMemory() {
-
+    public void getAuthDataNoDataMemory() {
         AuthData expected = new AuthData("TokenValueHere", "username");
         AuthDAOMemory testdb = new AuthDAOMemory();
         AuthData returned = testdb.getAuthData(expected.authToken());
@@ -21,7 +20,7 @@ public class AuthDAOTests {
     }
 
     @Test
-    public void SuccessGetUserDataMemory() {
+    public void successGetUserDataMemory() {
         AuthData expected = new AuthData("TokenValueHere", "username");
         AuthDAOMemory testdb = new AuthDAOMemory();
         testdb.addAuthData(expected);
@@ -30,7 +29,7 @@ public class AuthDAOTests {
     }
 
     @Test
-    public void ClearUserDataMemory() {
+    public void clearUserDataMemory() {
         AuthData value1 = new AuthData("token1", "value1");
         AuthData value2 = new AuthData("token2", "value2");
         AuthDAOMemory testdb = new AuthDAOMemory();
