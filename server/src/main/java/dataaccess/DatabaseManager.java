@@ -31,6 +31,11 @@ public class DatabaseManager {
         } catch (Exception ex) {
             throw new RuntimeException("unable to process db.properties. " + ex.getMessage());
         }
+        try {
+            createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
