@@ -8,6 +8,7 @@ import model.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static dataaccess.DatabaseManager.*;
@@ -20,7 +21,20 @@ public class GameDAOSQL implements GameDAO{
 
     @Override
     public List<GameData> listGames() {
-        return null;
+        String statement = "SELECT * FROM gameDB";
+        try {
+            List<GameData> list = new ArrayList<>();
+            ResultSet rs =  queryDatabase(statement);
+            GameData data = readGameData(rs);
+            while(data != null) {
+                list.add(data);
+                data = readGameData(rs);
+            }
+            return list;
+        } catch (ResponseException e) {
+            System.out.println(e.toString());
+            return null;
+        }
     }
 
     @Override
