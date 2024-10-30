@@ -54,7 +54,13 @@ public class UserDAOSQL implements UserDAO{
 
     @Override
     public void clearUserData() {
-
+        String statement = "DELETE FROM userdb";
+        try {
+            executeUpdate(statement);
+        }
+        catch (ResponseException ignored) {
+            System.out.println(ignored.messageToJSON());
+        }
     }
 
 

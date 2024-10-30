@@ -65,9 +65,16 @@ public class UserDAOTests {
     public void clearUserDataSQL() {
         UserData value1 = new UserData("default", "pw", "example");
         UserData value2 = new UserData("test", "other", "gmail");
-        UserDAOMemory testdb = new UserDAOMemory();
+        UserDAO testdb =null;
+        try {
+            testdb = new UserDAOSQL();
+        }
+        catch (ResponseException e) {
+            fail(e.getMessage());
+        }
         testdb.addUserData(value1);
         testdb.addUserData(value2);
+
         UserData returned = testdb.getUserData(value1.username());
         assertEquals(returned, value1);
         testdb.clearUserData();
