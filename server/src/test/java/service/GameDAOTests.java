@@ -22,8 +22,7 @@ public class GameDAOTests {
         GameDAO testdb = new GameDAOMemory();
         testdb.listGames();
         assert(testdb.listGames().isEmpty());
-        GameData testData =new GameData(1,"white", "black", "testGame", new ChessGame());
-        testdb.addGame(testData);
+        testdb.addGame(1,"white", "black", "testGame", new ChessGame());
         assert(!testdb.listGames().isEmpty());
     }
 
@@ -33,7 +32,7 @@ public class GameDAOTests {
         testdb.listGames();
         assert(testdb.listGames().isEmpty());
         GameData testData =new GameData(1,"white", "black", "testGame", new ChessGame());
-        testdb.addGame(testData);
+        testdb.addGame(1,"white", "black", "testGame", new ChessGame());
         assert(!testdb.listGames().isEmpty());
         assertEquals(testData, testdb.getGameDataByID(1));
     }

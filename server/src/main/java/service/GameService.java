@@ -3,6 +3,8 @@ package service;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
+import dataaccess.GameDAOMemory;
+import dataaccess.GameDAOSQL;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
@@ -29,9 +31,16 @@ public class GameService {
     public int createGame(String authToken, String gameName) throws  ResponseException{
         AuthData confirmed = authDB.getAuthData(authToken);
         if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}
-        int gameID = nextGameID();
-        gameDB.addGame(new GameData(gameID, null, null, gameName, new ChessGame()));
-        return gameID;
+        if(gameDB instanceof GameDAOSQL) {
+            int gameID = gameDB.addGame(-1, null, null, gameName, new ChessGame());
+
+            return gameID;
+        }
+        else {
+            int gameID=nextGameID();
+            gameDB.addGame(gameID, null, null, gameName, new ChessGame());
+            return gameID;
+        }
     }
 
     public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws ResponseException{
@@ -52,7 +61,7 @@ public class GameService {
             }
             default -> throw new ResponseException(400, "Error: bad request");
         }
-        gameDB.addGame(gameData);
+        gameDB.addGame(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
     }
 
     public int nextGameID() {
