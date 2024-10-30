@@ -47,7 +47,7 @@ public class AuthDAOTests {
 
 
     @Test
-    public void clearUserDataSL() {
+    public void clearUserDataSQL() {
         AuthData value1 = new AuthData("token1", "value1");
         AuthData value2 = new AuthData("token2", "value2");
         AuthDAO testdb = null;
@@ -59,11 +59,11 @@ public class AuthDAOTests {
 
         testdb.addAuthData(value1);
         testdb.addAuthData(value2);
-//        AuthData returned = testdb.getAuthData(value1.authToken());
-//        assertEquals(returned, value1);
-//
+        AuthData returned = testdb.getAuthData(value1.authToken());
+        assertEquals(returned, value1);
+
         testdb.clearAuthData();
-//        assertNull(testdb.getAuthData(value1.authToken()));
-//        assertNull(testdb.getAuthData(value2.authToken()));
+        assertNull(testdb.getAuthData(value1.authToken()));
+        assertNull(testdb.getAuthData(value2.authToken()));
     }
 }

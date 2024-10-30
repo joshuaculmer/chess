@@ -3,9 +3,12 @@ package dataaccess;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
+import model.UserData;
 
-import static dataaccess.DatabaseManager.configureTable;
-import static dataaccess.DatabaseManager.executeUpdate;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static dataaccess.DatabaseManager.*;
 
 public class AuthDAOSQL implements AuthDAO{
 
@@ -27,6 +30,25 @@ public class AuthDAOSQL implements AuthDAO{
 
     @Override
     public AuthData getAuthData(String authToken) {
+        String statement = "SELECT * FROM authDB WHERE authToken = '" + authToken + "';";
+        try {
+            return readAuthData(queryDatabase(statement));
+        } catch (ResponseException e) {
+            System.out.println(e.toString());
+            return null;
+        }
+    }
+
+    private AuthData readAuthData(ResultSet rs) {
+        try {
+            if(rs.next()) {
+                var authToken=rs.getString("authToken");
+                var username=rs.getString("username");
+                return new AuthData(authToken,username);
+            }
+        }
+        catch (SQLException ignored) {
+        }
         return null;
     }
 
