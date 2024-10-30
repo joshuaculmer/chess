@@ -50,4 +50,17 @@ public class GameDAOTests {
         }
         assert(testdb.listGames().isEmpty());
     }
+
+    @Test
+    public void addGameToDBSQL() {
+        GameDAO testdb = null;
+        try {
+            testdb = new GameDAOSQL();
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        assert(testdb.listGames().isEmpty());
+        testdb.addGame(1,"white", "black", "testGame", new ChessGame());
+        assert(!testdb.listGames().isEmpty());
+    }
 }

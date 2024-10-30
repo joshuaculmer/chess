@@ -39,7 +39,7 @@ public class GameDAOSQL implements GameDAO{
 
     @Override
     public int addGame(int gameID, String whiteUsername, String blackUserName, String gameName, ChessGame game ) {
-        String statement = "INSERT INTO gameDB (gameID, whiteUsername, blackUsername, gameName, json) VALUES (?, ?, ?, ?, ?)";
+        String statement = "INSERT INTO gameDB (whiteUsername, blackUsername, gameName, json) VALUES (?, ?, ?, ?)";
         Object json = new Gson().toJson(game);
         try {
             int id = executeUpdate(statement, null, null, gameName, json);
