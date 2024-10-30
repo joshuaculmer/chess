@@ -54,7 +54,13 @@ public class AuthDAOSQL implements AuthDAO{
 
     @Override
     public void removeAuthData(AuthData authData) {
-
+        String statement = "DELETE FROM authDB WHERE authToken = '" + authData.authToken() + "';";
+        try {
+            executeUpdate(statement);
+        }
+        catch (ResponseException ignored) {
+            System.out.println(ignored.messageToJSON());
+        }
     }
 
     @Override

@@ -17,8 +17,26 @@ public class Server {
     private UserDAO userDB = new UserDAOMemory();
     private AuthDAO authDB = new AuthDAOMemory();
     private GameDAO gameDB = new GameDAOMemory();
-    UserService userSerivceInstance = new UserService(userDB, authDB);
-    GameService gameServiceInstance = new GameService(authDB, gameDB);
+    UserService userSerivceInstance = null;
+    GameService gameServiceInstance = null;
+
+
+    public Server() {
+        try {
+            userDB=new UserDAOSQL();
+        } catch (ResponseException ignored) {
+            System.out.println("Couldn't connect to User Table");
+        }
+        try {
+            authDB=new AuthDAOSQL();
+        } catch (ResponseException ignored) {
+            System.out.println("Couldn't connect to User Table");
+        }
+        userSerivceInstance = new UserService(userDB, authDB);
+        gameServiceInstance = new GameService(authDB, gameDB);
+    }
+
+
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
