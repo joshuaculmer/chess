@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
@@ -21,16 +22,17 @@ public class GameDAOSQL implements GameDAO{
     }
 
     @Override
-    public void addGame(GameData game) {
+    public int addGame(int gameID, String whiteUsername, String blackUserName, String gameName, ChessGame game ) {
         String statement = "INSERT INTO gameDB (gameID, whiteUsername, blackUsername, gameName, json) VALUES (?, ?, ?, ?, ?)";
         Object json = new Gson().toJson(game);
         try {
-            int gameID = executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), json);
+            int id = executeUpdate(statement, null, null, gameName, json);
+            return id;
         }
         catch (ResponseException ignored) {
             System.out.println(ignored.messageToJSON());
+            return -1;
         }
-
     }
 
     @Override

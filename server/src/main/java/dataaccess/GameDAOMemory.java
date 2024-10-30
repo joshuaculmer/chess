@@ -18,8 +18,9 @@ public class GameDAOMemory implements GameDAO{
         return new ArrayList<GameData>(dataBase.values());
     }
 
-    public void addGame(GameData game) {
-        dataBase.put(game.gameID(), game);
+    public int addGame(int gameID, String whiteUsername, String blackUserName, String gameName, ChessGame game) {
+        dataBase.put(gameID, new GameData(gameID, whiteUsername, blackUserName, gameName, game));
+        return gameID;
     }
 
     public GameData getGameDataByID(int gameID){
