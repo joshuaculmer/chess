@@ -1,12 +1,8 @@
-# Currently on Phase 0
+# SQL Commands
 
-Done planning possibleMoves(piece,pos)::<moves>, pieceMoves()::<moves>, isValid(move)::bool
+Access mySql
+mysqlsh -u root -ppassword --sql
 
-Finished implementing all .equals(), .hashCode(), and toString() for Pos, Move, Piece, Board
-
-# Passed off Tests
-- Chess Position Tests
-- Chess Move Tests
-
-# Failed Tests
-- Chess Board Tests
+show databases; (Displays all databases)
+use dbName; (Opens a database)
+select *; (Query from the table)
