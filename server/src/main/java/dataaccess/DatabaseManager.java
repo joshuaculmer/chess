@@ -106,18 +106,14 @@ public class DatabaseManager {
         }
     }
 
-    static Object queryDatabase(String statement) throws ResponseException {
-        try (var conn = getConnection()) {
-            try (var ps = conn.prepareStatement(statement)) {
-                try (var rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return rs;
-                    }
-                }
-            }
+    static ResultSet queryDatabase(String statement) throws ResponseException {
+        try  {
+            var conn = getConnection();
+            var ps = conn.prepareStatement(statement);
+            var rs = ps.executeQuery();
+            return rs;
         } catch (SQLException | DataAccessException e) {
-            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+            throw new ResponseException(500, String.format("unable to query database: %s, %s", statement, e.getMessage()));
         }
-        return null;
     }
 }

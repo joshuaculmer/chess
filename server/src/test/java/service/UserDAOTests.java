@@ -58,7 +58,7 @@ public class UserDAOTests {
         }
         testdb.addUserData(expected);
         UserData returned = testdb.getUserData(expected.username());
-        assertEquals(returned, expected);
+        assertEquals(expected, returned);
     }
 
     @Test
