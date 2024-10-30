@@ -52,6 +52,7 @@ public class UserDAOTests {
         UserDAO testdb=null;
         try {
             testdb = new UserDAOSQL();
+            testdb.clearUserData();
         }
         catch (ResponseException e) {
             fail(e.getMessage());

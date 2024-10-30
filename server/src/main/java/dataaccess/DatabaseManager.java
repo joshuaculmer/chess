@@ -116,4 +116,20 @@ public class DatabaseManager {
             throw new ResponseException(500, String.format("unable to query database: %s, %s", statement, e.getMessage()));
         }
     }
+
+    static void configureTable(String[] createStatement) throws ResponseException {
+        try {
+            var conn = DatabaseManager.getConnection();
+            for (var statement : createStatement) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+
+        } catch (SQLException ex ) {
+            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+        } catch (DataAccessException ex) {
+            throw new ResponseException(500, String.format("Unable to connect to database: %s", ex.getMessage()));
+        }
+    }
 }

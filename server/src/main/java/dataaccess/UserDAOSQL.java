@@ -12,7 +12,7 @@ import static dataaccess.DatabaseManager.*;
 public class UserDAOSQL implements UserDAO{
 
     public UserDAOSQL() throws ResponseException{
-        configureTable();
+        configureTable(createStatementsUserDB);
     }
 
     @Override
@@ -75,19 +75,4 @@ public class UserDAOSQL implements UserDAO{
             """
     };
 
-    private void configureTable() throws ResponseException {
-        try {
-            var conn = DatabaseManager.getConnection();
-            for (var statement : createStatementsUserDB) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-
-        } catch (SQLException ex ) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        } catch (DataAccessException ex) {
-            throw new ResponseException(500, String.format("Unable to connect to database: %s", ex.getMessage()));
-        }
-    }
 }
