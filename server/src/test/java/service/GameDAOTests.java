@@ -8,6 +8,8 @@ import exception.ResponseException;
 import model.GameData;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -48,6 +50,7 @@ public class GameDAOTests {
         } catch (ResponseException e) {
             fail(e.getMessage());
         }
+        testdb.clearGameData();
         assert(testdb.listGames().isEmpty());
     }
 
@@ -62,5 +65,37 @@ public class GameDAOTests {
         assert(testdb.listGames().isEmpty());
         testdb.addGame(1,"white", "black", "testGame", new ChessGame());
         assert(!testdb.listGames().isEmpty());
+    }
+
+    @Test
+    public void clearFromDBSQL() {
+        GameDAO testdb = null;
+        try {
+            testdb = new GameDAOSQL();
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        testdb.addGame(1,"white", "black", "testGame", new ChessGame());
+        assert(!testdb.listGames().isEmpty());
+        testdb.clearGameData();
+        assert(testdb.listGames().isEmpty());
+    }
+
+
+    @Test
+    public void getGameFromDBSQL() {
+        GameDAO testdb = null;
+        try {
+            testdb = new GameDAOSQL();
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        testdb.clearGameData();
+        assert(testdb.listGames().isEmpty());
+        GameData testData =new GameData(1,"white", "black", "testGame", new ChessGame());
+        testdb.addGame(1,"white", "black", "testGame", new ChessGame());
+        List<GameData> list = testdb.listGames();
+        assert(!list.isEmpty());
+        assertEquals(testData.game(), list.get(0).game());
     }
 }
