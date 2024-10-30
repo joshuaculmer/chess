@@ -4,11 +4,13 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
+import model.UserData;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
-import static dataaccess.DatabaseManager.configureTable;
-import static dataaccess.DatabaseManager.executeUpdate;
+import static dataaccess.DatabaseManager.*;
 
 public class GameDAOSQL implements GameDAO{
 
@@ -37,6 +39,28 @@ public class GameDAOSQL implements GameDAO{
 
     @Override
     public GameData getGameDataByID(int gameID) {
+        String statement = "SELECT * FROM gameDB WHERE gameID = '" + gameID + "';";
+        try {
+            return readGameData(queryDatabase(statement));
+        } catch (ResponseException e) {
+            System.out.println(e.toString());
+            return null;
+        }
+    }
+
+    private GameData readGameData(ResultSet rs) {
+        try {
+            if(rs.next()) {
+                var gameID=rs.getInt("gameID");
+                var whiteUserName=rs.getString("whiteUserName");
+                var blackUserName=rs.getString("blackUserName");
+                var gameName = rs.getString("gameName");
+                var json = rs.getString("json");
+                return new GameData(gameID, whiteUserName, blackUserName, gameName, new Gson().fromJson(json, ChessGame.class));
+            }
+        }
+        catch (SQLException ignored) {
+        }
         return null;
     }
 
