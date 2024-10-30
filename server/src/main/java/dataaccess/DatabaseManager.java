@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.Properties;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
 
 public class DatabaseManager {
     private static final String DATABASE_NAME;
@@ -46,9 +47,8 @@ public class DatabaseManager {
      * Creates the database if it does not already exist.
      */
     static void createDatabase() throws DataAccessException {
-        try {
+        try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);){
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
@@ -70,8 +70,7 @@ public class DatabaseManager {
      * </code>
      */
     static Connection getConnection() throws DataAccessException {
-        try {
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+        try (var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);){
             conn.setCatalog(DATABASE_NAME);
             return conn;
         } catch (SQLException e) {
@@ -84,7 +83,12 @@ public class DatabaseManager {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    System.out.println("TODO");
+                    if (param instanceof String p) {
+                        ps.setString(i + 1, p);
+                    }
+                    else if (param == null) {
+                        ps.setNull(i + 1, NULL);
+                    }
                 }
                 ps.executeUpdate();
 
@@ -98,5 +102,20 @@ public class DatabaseManager {
         } catch (SQLException | DataAccessException e) {
             throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
+    }
+
+    static Object queryDatabase(String statement) throws ResponseException {
+        try (var conn = getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs;
+                    }
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+        return null;
     }
 }
