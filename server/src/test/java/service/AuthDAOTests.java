@@ -57,12 +57,12 @@ public class AuthDAOTests {
             fail(e.getMessage());
         }
 
-//        testdb.addAuthData(value1);
-//        testdb.addAuthData(value2);
+        testdb.addAuthData(value1);
+        testdb.addAuthData(value2);
 //        AuthData returned = testdb.getAuthData(value1.authToken());
 //        assertEquals(returned, value1);
 //
-//        testdb.clearAuthData();
+        testdb.clearAuthData();
 //        assertNull(testdb.getAuthData(value1.authToken()));
 //        assertNull(testdb.getAuthData(value2.authToken()));
     }

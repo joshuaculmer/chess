@@ -15,7 +15,7 @@ public class AuthDAOSQL implements AuthDAO{
 
     @Override
     public void addAuthData(AuthData authdata) {
-        String statement = "INSERT INTO authDB (authToken, username, email, json) VALUES (?, ?, ?, ?)";
+        String statement = "INSERT INTO authDB (authToken, username, json) VALUES (?, ?, ?)";
         Object json = new Gson().toJson(authdata);
         try {
             executeUpdate(statement, authdata.authToken(), authdata.username(), json);
@@ -37,7 +37,13 @@ public class AuthDAOSQL implements AuthDAO{
 
     @Override
     public void clearAuthData() {
-
+        String statement = "DELETE FROM authDB";
+        try {
+            executeUpdate(statement);
+        }
+        catch (ResponseException ignored) {
+            System.out.println(ignored.messageToJSON());
+        }
     }
 
     private final String[] createStatementsAuthDB = {
