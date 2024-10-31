@@ -93,9 +93,31 @@ public class GameDAOTests {
         testdb.clearGameData();
         assert(testdb.listGames().isEmpty());
         GameData testData =new GameData(1,"white", "black", "testGame", new ChessGame());
-        testdb.addGame(1,"white", "black", "testGame", new ChessGame());
+        int gameID = testdb.addGame(1,"white", "black", "testGame", new ChessGame());
         List<GameData> list = testdb.listGames();
         assert(!list.isEmpty());
-        assertEquals(testData.game(), list.get(0).game());
+        assertEquals(testData.game(), testdb.getGameDataByID(gameID).game());
+    }
+
+
+    @Test
+    public void updateGameFromDBSQL() {
+        GameDAOSQL testdb = null;
+        try {
+            testdb = new GameDAOSQL();
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        testdb.clearGameData();
+        assert(testdb.listGames().isEmpty());
+        int gameID = testdb.addGame(1,null, null, "testGame", new ChessGame());
+        List<GameData> list = testdb.listGames();
+        assert(!list.isEmpty());
+        testdb.setGameData(gameID,"white", null, "testGame", new ChessGame());
+        list = testdb.listGames();
+        assert(list.size() == 1);
+        GameData expected = new GameData(gameID,"white", null, "testGame", new ChessGame());
+        GameData result = testdb.getGameDataByID(gameID);
+        assert(expected.equals(result));
     }
 }

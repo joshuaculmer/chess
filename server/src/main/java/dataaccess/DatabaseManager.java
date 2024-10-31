@@ -91,6 +91,9 @@ public class DatabaseManager {
                     else if (param == null) {
                         ps.setNull(i + 1, NULL);
                     }
+                    else if (param instanceof Integer p) {
+                        ps.setInt(i + 1, p);
+                    }
                 }
                 ps.executeUpdate();
 

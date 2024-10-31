@@ -62,6 +62,17 @@ public class GameDAOSQL implements GameDAO{
         }
     }
 
+    public void setGameData(int gameID, String whiteUsername, String blackUserName, String gameName, ChessGame game ) {
+        String statement = "UPDATE gameDB SET gameID = ?, whiteUsername = ?, blackUsername= ?, gameName = ?, json = ?";
+        Object json = new Gson().toJson(game);
+        try {
+            int id = executeUpdate(statement,gameID, whiteUsername, blackUserName, gameName, json);
+        }
+        catch (ResponseException ignored) {
+            System.out.println(ignored.messageToJSON());
+        }
+    }
+
     private GameData readGameData(ResultSet rs) {
         try {
             if(rs.next()) {
