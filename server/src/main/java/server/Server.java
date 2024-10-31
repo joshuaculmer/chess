@@ -30,7 +30,12 @@ public class Server {
         try {
             authDB=new AuthDAOSQL();
         } catch (ResponseException ignored) {
-            System.out.println("Couldn't connect to User Table");
+            System.out.println("Couldn't connect to Auth Table");
+        }
+        try {
+            gameDB=new GameDAOSQL();
+        } catch (ResponseException ignored) {
+            System.out.println("Couldn't connect to Game Table");
         }
         userSerivceInstance = new UserService(userDB, authDB);
         gameServiceInstance = new GameService(authDB, gameDB);

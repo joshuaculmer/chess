@@ -33,7 +33,6 @@ public class GameService {
         if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}
         if(gameDB instanceof GameDAOSQL) {
             int gameID = gameDB.addGame(-1, null, null, gameName, new ChessGame());
-
             return gameID;
         }
         else {
@@ -61,7 +60,12 @@ public class GameService {
             }
             default -> throw new ResponseException(400, "Error: bad request");
         }
-        gameDB.addGame(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        if(gameDB instanceof GameDAOMemory) {
+            gameDB.addGame(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        }
+        else if(gameDB instanceof GameDAOSQL) {
+            ((GameDAOSQL) gameDB).setGameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        }
     }
 
     public int nextGameID() {
