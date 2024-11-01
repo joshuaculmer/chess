@@ -18,7 +18,7 @@ public class UserDAOSQL implements UserDAO{
 
     @Override
     public UserData getUserData(String userName) {
-        String statement = "SELECT * FROM userdb WHERE name = '" + userName + "';";
+        String statement = "SELECT * FROM userDB WHERE name = '" + userName + "';";
         try {
             return readUserData(queryDatabase(statement));
         } catch (ResponseException e) {
@@ -55,7 +55,7 @@ public class UserDAOSQL implements UserDAO{
 
     @Override
     public void clearUserData() {
-        String statement = "DELETE FROM userdb";
+        String statement = "DELETE FROM userDB";
         try {
             executeUpdate(statement);
         }
