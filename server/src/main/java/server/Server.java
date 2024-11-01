@@ -94,7 +94,12 @@ public class Server {
 
     public Object createGame(Request req, Response res) throws ResponseException{
         String authToken = req.headers("Authorization");
-        return "{\"gameID\": " + gameServiceInstance.createGame(authToken, req.body()) + " }";
+
+        record GameCreateRequest (String gameName) {}
+        GameCreateRequest createRequest = new Gson().fromJson(req.body(), GameCreateRequest.class);
+        String gameName =createRequest.gameName;
+
+        return "{\"gameID\": " + gameServiceInstance.createGame(authToken, gameName) + " }";
     }
 
     public Object joinGame(Request req, Response res) throws ResponseException{

@@ -63,10 +63,10 @@ public class GameDAOSQL implements GameDAO{
     }
 
     public void setGameData(int gameID, String whiteUsername, String blackUserName, String gameName, ChessGame game ) {
-        String statement = "UPDATE gameDB SET gameID = ?, whiteUsername = ?, blackUsername= ?, gameName = ?, json = ?";
+        String statement = "UPDATE gameDB SET gameID = ?, whiteUsername = ?, blackUsername= ?, gameName = ?, json = ? WHERE gameID = ?";
         Object json = new Gson().toJson(game);
         try {
-            int id = executeUpdate(statement,gameID, whiteUsername, blackUserName, gameName, json);
+            int id = executeUpdate(statement,gameID, whiteUsername, blackUserName, gameName, json, gameID);
         }
         catch (ResponseException ignored) {
             System.out.println(ignored.messageToJSON());
