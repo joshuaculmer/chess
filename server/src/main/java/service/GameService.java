@@ -64,7 +64,8 @@ public class GameService {
             gameDB.addGame(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
         }
         else if(gameDB instanceof GameDAOSQL) {
-            ((GameDAOSQL) gameDB).setGameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+            ((GameDAOSQL) gameDB).setGameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(),
+                    gameData.gameName(), gameData.game());
         }
     }
 
