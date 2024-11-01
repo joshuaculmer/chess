@@ -1,4 +1,4 @@
-package service;
+package dataaccess;
 
 import dataaccess.UserDAO;
 import dataaccess.UserDAOMemory;
@@ -47,7 +47,6 @@ public class UserDAOTests {
 
     @Test
     public void successGetUserDataSQL() {
-
         UserData expected = new UserData("default", "pw", "example");
         UserDAO testdb=null;
         try {
@@ -60,6 +59,22 @@ public class UserDAOTests {
         testdb.addUserData(expected);
         UserData returned = testdb.getUserData(expected.username());
         assertEquals(expected, returned);
+    }
+
+    @Test
+    public void failureGetUserDataSQL() {
+        UserData expected = new UserData("default", "pw", "example");
+        UserDAO testdb=null;
+        try {
+            testdb = new UserDAOSQL();
+            testdb.clearUserData();
+        }
+        catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        testdb.addUserData(expected);
+        UserData returned = testdb.getUserData("user");
+        assertNull(returned);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package service;
+package dataaccess;
 
 import chess.ChessGame;
 import dataaccess.GameDAO;
@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameDAOTests {
 
@@ -62,6 +61,7 @@ public class GameDAOTests {
         } catch (ResponseException e) {
             fail(e.getMessage());
         }
+        testdb.clearGameData();
         assert(testdb.listGames().isEmpty());
         testdb.addGame(1,"white", "black", "testGame", new ChessGame());
         assert(!testdb.listGames().isEmpty());
@@ -97,6 +97,22 @@ public class GameDAOTests {
         List<GameData> list = testdb.listGames();
         assert(!list.isEmpty());
         assertEquals(testData.game(), testdb.getGameDataByID(gameID).game());
+    }
+
+    @Test
+    public void failureGetGameFromDBSQL() {
+        GameDAO testdb = null;
+        try {
+            testdb = new GameDAOSQL();
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        testdb.clearGameData();
+        assert(testdb.listGames().isEmpty());
+        int gameID = testdb.addGame(1,"white", "black", "testGame", new ChessGame());
+        List<GameData> list = testdb.listGames();
+        assert(!list.isEmpty());
+        assertNull(testdb.getGameDataByID(2));
     }
 
 

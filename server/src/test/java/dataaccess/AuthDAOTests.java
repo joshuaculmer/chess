@@ -1,4 +1,4 @@
-package service;
+package dataaccess;
 
 import dataaccess.AuthDAO;
 import dataaccess.AuthDAOMemory;
@@ -66,4 +66,59 @@ public class AuthDAOTests {
         assertNull(testdb.getAuthData(value1.authToken()));
         assertNull(testdb.getAuthData(value2.authToken()));
     }
+
+    @Test
+    public void getAuthDataNoDataSQL() {
+        AuthData value1 = new AuthData("token1", "value1");
+
+        AuthDAO testdb = null;
+        try {
+            testdb = new AuthDAOSQL();
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        testdb.clearAuthData();
+        AuthData returned = testdb.getAuthData(value1.authToken());
+        assertNull(returned);
+    }
+
+    @Test
+    public void successGetUserDataSQL() {
+        AuthData value1 = new AuthData("token1", "value1");
+        AuthDAO testdb = null;
+        try {
+            testdb = new AuthDAOSQL();
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        testdb.clearAuthData();
+        AuthData returned = testdb.getAuthData(value1.authToken());
+        assertNull(returned);
+
+        testdb.addAuthData(value1);
+
+        returned = testdb.getAuthData(value1.authToken());
+        assertEquals(value1, returned);
+    }
+
+    @Test
+    public void failureGetUserDataSQL() {
+        AuthData value1 = new AuthData("token1", "value1");
+        AuthDAO testdb = null;
+        try {
+            testdb = new AuthDAOSQL();
+        } catch (ResponseException e) {
+            fail(e.getMessage());
+        }
+        testdb.clearAuthData();
+        AuthData returned = testdb.getAuthData(value1.authToken());
+        assertNull(returned);
+
+        testdb.addAuthData(value1);
+
+        returned = testdb.getAuthData("token2");
+        assertNull(returned);
+    }
+
+
 }
