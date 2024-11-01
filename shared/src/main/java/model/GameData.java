@@ -8,17 +8,27 @@ public record GameData(int gameID, String whiteUsername, String blackUsername,
                        String gameName, ChessGame game) {
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         GameData gameData=(GameData) o;
 
-        if (gameID != gameData.gameID) return false;
-        if (!Objects.equals(whiteUsername, gameData.whiteUsername))
+        if (gameID != gameData.gameID) {
             return false;
-        if (!Objects.equals(blackUsername, gameData.blackUsername))
+        }
+        if (!Objects.equals(whiteUsername, gameData.whiteUsername)) {
             return false;
-        if (!Objects.equals(gameName, gameData.gameName)) return false;
+        }
+        if (!Objects.equals(blackUsername, gameData.blackUsername)) {
+            return false;
+        }
+        if (!Objects.equals(gameName, gameData.gameName)) {
+            return false;
+        }
         return game.equals(gameData.game);
     }
 

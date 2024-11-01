@@ -241,13 +241,21 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ChessGame chessGame=(ChessGame) o;
 
-        if (!Objects.equals(board, chessGame.board)) return false;
-        if (!Objects.equals(moves, chessGame.moves)) return false;
+        if (!Objects.equals(board, chessGame.board)) {
+            return false;
+        }
+        if (!Objects.equals(moves, chessGame.moves)) {
+            return false;
+        }
         return teamTurn == chessGame.teamTurn;
     }
 
