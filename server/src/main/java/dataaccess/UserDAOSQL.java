@@ -3,6 +3,7 @@ import com.google.gson.Gson;
 import exception.ResponseException;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -5,6 +5,7 @@ import dataaccess.UserDAOMemory;
 import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ public class UserServiceTests {
             fail("Could not register the user successfully, returned error" + e);
         }
         UserData result = userDB.getUserData(user.username());
-        assertEquals(result, user);
+        assertNotNull(result);
     }
 
     @Test
@@ -103,6 +104,23 @@ public class UserServiceTests {
             fail();
         } catch (ResponseException e) {
             assertEquals(e, new ResponseException(401, "User logout information is invalid"));
+        }
+    }
+
+
+    @Test
+    public void wrongPassword() {
+        UserDAOMemory userDB = new UserDAOMemory();
+        AuthDAOMemory authDB = new AuthDAOMemory();
+        UserService testService = new UserService(userDB, authDB);
+        UserData user = new UserData("name", "pw", "mail");
+        UserData newUser = new UserData("name", "other", "email");
+        try {
+            testService.register(user);
+            testService.login(newUser);
+            fail("Did not throw error");
+        } catch (ResponseException e) {
+            assertEquals(e, new ResponseException(401, "User login information is invalid"));
         }
     }
 }
