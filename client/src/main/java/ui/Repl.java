@@ -21,7 +21,7 @@ public class Repl {
             String line = scanner.nextLine();
 
             try {
-                result = line;
+                result = client.eval(line);
                 System.out.print(SET_TEXT_BOLD + result);
             } catch (Throwable e) {
                 var msg = e.toString();
