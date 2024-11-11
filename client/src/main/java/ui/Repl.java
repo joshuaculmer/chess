@@ -1,12 +1,32 @@
 package ui;
 
+import java.util.Scanner;
+
+import static ui.EscapeSequences.*;
+
 public class Repl {
+    private final ChessClient client;
 
-    // Displays everything for the Chess Client
+    public Repl(String serverURL) {
+        client=new ChessClient(serverURL);
+    }
 
-    // Welcome!
+    public void run() {
+        System.out.println("Welcome to 240 Chess Client ♕");
+        System.out.print(client.help());
 
-    // While loop
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while(!result.equals("quit")) {
+            String line = scanner.nextLine();
 
-        // print stuff
+            try {
+                result = line;
+                System.out.print(SET_TEXT_BOLD + result);
+            } catch (Throwable e) {
+                var msg = e.toString();
+                System.out.print(msg);
+            }
+        }
+    }
 }
