@@ -66,6 +66,7 @@ public class ChessClient {
     }
 
     public String joinGame() {
+        clientState = state.IN_GAME;
         return "Join Game: TODO";
     }
 

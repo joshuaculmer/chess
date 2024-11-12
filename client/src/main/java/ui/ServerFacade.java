@@ -14,6 +14,36 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
+    private Object registerUser(String... params) {
+        return null;
+    }
+
+    private Object loginuser(String... params) {
+        return null;
+    }
+
+    private Object logout(String... params) {
+        return null;
+    }
+
+    private Object listGames(String... params) {
+        return null;
+    }
+
+    private Object createGame(String... params) {
+        return null;
+    }
+
+    private Object joinGame(String... params) {
+        return null;
+    }
+
+    private Object clearAll(String... params) {
+        return null;
+    }
+
+
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
