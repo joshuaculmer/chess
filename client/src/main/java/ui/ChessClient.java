@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.Arrays;
+
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
@@ -18,7 +20,10 @@ public class ChessClient {
     // this runs all the logic for the chess client
 
 
-    public String eval(String cmd) {
+    public String eval(String input) {
+        var tokens = input.toLowerCase().split(" ");
+        var cmd = (tokens.length > 0) ? tokens[0] : "help";
+        var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (clientState) {
             case LOGGED_OUT -> switch (cmd) {
                 case "register" -> register();
@@ -27,6 +32,11 @@ public class ChessClient {
                 default -> helpLoggedOut();
             };
             case LOGGED_IN -> switch (cmd) {
+                case "create" -> createGame();
+                case "list" -> listGames();
+                case "join" -> joinGame();
+                case "observe" -> observeGame();
+                case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> helpLoggedIn();
             };
@@ -43,6 +53,29 @@ public class ChessClient {
         clientState = state.LOGGED_IN;
         return "Login: TODO";
     }
+
+    public String createGame() {
+        return "Create Game: TODO";
+    }
+
+    public String listGames() {
+        return "List games: TODO";
+    }
+
+    public String joinGame() {
+        return "Join Game: TODO";
+    }
+
+    public String observeGame() {
+        return "Observe Game: TODO";
+    }
+
+    public String logout() {
+        clientState = state.LOGGED_OUT;
+        return "Logout: TODO";
+    }
+
+
 
     public String helpLoggedOut() {
         return SET_TEXT_COLOR_BLUE +"register <USERNAME> <PASSWORD> <EMAIL> "+ SET_TEXT_COLOR_YELLOW + "- to create an account\n" +
