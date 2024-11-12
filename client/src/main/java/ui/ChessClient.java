@@ -4,9 +4,11 @@ import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
 
+
 public class ChessClient {
 
     private state clientState = state.LOGGED_OUT;
+    private final ServerFacade server;
 
     enum state {
         LOGGED_OUT,
@@ -15,6 +17,7 @@ public class ChessClient {
     }
 
     public ChessClient(String url) {
+        server = new ServerFacade(url);
 
     }
     // this runs all the logic for the chess client
