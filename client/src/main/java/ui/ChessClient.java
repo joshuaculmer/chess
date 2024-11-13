@@ -47,7 +47,7 @@ public class ChessClient {
                 default -> helpLoggedOut();
             };
             case LOGGED_IN -> switch (cmd) {
-                case "create" -> createGame();
+                case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame();
@@ -55,7 +55,7 @@ public class ChessClient {
                 case "quit" -> "quit";
                 default -> helpLoggedIn();
             };
-            case IN_GAME -> "todo";
+            case IN_GAME -> "Game would render here";
         };
     }
 
@@ -95,8 +95,18 @@ public class ChessClient {
         }
     }
 
-    public String createGame() {
-        return "Create Game: TODO";
+    public String createGame(String... params) {
+        if(params.length > 1) {
+            return helpLoggedIn();
+        }
+        String gameName = params[0];
+        try {
+            facade.createGame(authToken, gameName);
+            return  "Game created";
+        }
+        catch (ResponseException e) {
+            return e.getMessage();
+        }
     }
 
     public String listGames() {
