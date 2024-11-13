@@ -1,5 +1,9 @@
 package ui;
 
+import chess.ChessGame;
+import exception.ResponseException;
+import model.UserData;
+
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
@@ -8,7 +12,10 @@ import static ui.EscapeSequences.*;
 public class ChessClient {
 
     private state clientState = state.LOGGED_OUT;
-    private final ServerFacade server;
+    private final ServerFacade facade;
+    private String authToken = "";
+    private ChessGame game;
+    private int gameID;
 
     enum state {
         LOGGED_OUT,
@@ -17,7 +24,7 @@ public class ChessClient {
     }
 
     public ChessClient(String url) {
-        server = new ServerFacade(url);
+        facade = new ServerFacade(url);
 
     }
     // this runs all the logic for the chess client
@@ -29,7 +36,7 @@ public class ChessClient {
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (clientState) {
             case LOGGED_OUT -> switch (cmd) {
-                case "register" -> register();
+                case "register" -> register(params);
                 case "login" -> login();
                 case "quit" -> "quit";
                 default -> helpLoggedOut();
@@ -47,9 +54,23 @@ public class ChessClient {
         };
     }
 
-    public String register() {
-        clientState = state.LOGGED_IN;
-        return "Register: TODO";
+    public String register(String... params) {
+        if(params.length != 3) {
+            return helpLoggedIn();
+        }
+        String username = params[0];
+        String password = params[1];
+        String email = params[2];
+        UserData user = new UserData(username, password, email);
+        try {
+            authToken = facade.registerUser(user).authToken();
+            clientState = state.LOGGED_IN;
+            return "Registered";
+        }
+        catch (ResponseException e) {
+            return e.getMessage();
+        }
+
     }
 
     public String login() {
@@ -85,7 +106,8 @@ public class ChessClient {
         return SET_TEXT_COLOR_BLUE +"register <USERNAME> <PASSWORD> <EMAIL> "+ SET_TEXT_COLOR_YELLOW + "- to create an account\n" +
                 SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD> "+ SET_TEXT_COLOR_YELLOW + "- to play chess\n" +
                 SET_TEXT_COLOR_BLUE + "quit "+ SET_TEXT_COLOR_YELLOW + "- playing chess\n" +
-                SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n";
+                SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n" +
+                SET_TEXT_COLOR_WHITE + "Logged Out:" ;
     }
 
     public String helpLoggedIn() {
@@ -95,7 +117,8 @@ public class ChessClient {
                 SET_TEXT_COLOR_BLUE + "observe <ID> "+ SET_TEXT_COLOR_YELLOW + "- a game\n" +
                 SET_TEXT_COLOR_BLUE +"logout "+ SET_TEXT_COLOR_YELLOW + "- when you are done\n" +
                 SET_TEXT_COLOR_BLUE + "quit "+ SET_TEXT_COLOR_YELLOW + "- playing chess\n" +
-                SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n";
+                SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n" +
+                SET_TEXT_COLOR_WHITE + "Logged In: " ;
     }
 
     public String helpInGame() {
