@@ -2,8 +2,10 @@ package ui;
 
 import chess.ChessGame;
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
@@ -98,7 +100,23 @@ public class ChessClient {
     }
 
     public String listGames() {
-        return "List games: TODO";
+        try {
+            ArrayList<GameData> list =  facade.listGames(authToken);
+            if(list.isEmpty()) {
+                return "No games have been created, type create *gameName* to start a new game!";
+            }
+            else {
+                String result = "";
+                for(GameData game : list) {
+                    result += game.gameID() + "\n";
+                }
+                return result;
+            }
+
+        }
+        catch (ResponseException e) {
+            return e.getMessage();
+        }
     }
 
     public String joinGame() {
