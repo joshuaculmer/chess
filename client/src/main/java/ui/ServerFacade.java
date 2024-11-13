@@ -41,9 +41,10 @@ public class ServerFacade {
         return makeRequest("POST", path, null, authToken, ArrayList.class);
     }
 
-    public int createGame(String authToken, String gameName) throws ResponseException{
+    public int createGame(String authToken, Object createRequest) throws ResponseException{
         String path = "/game";
-        return makeRequest("POST", path, gameName, authToken, int.class);
+        record GameID (int gameID) {};
+        return makeRequest("POST", path, createRequest, authToken, GameID.class).gameID;
     }
 
     public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws ResponseException {
@@ -67,8 +68,7 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(request, http);
-            writeHeader(header, http);
+            writeHeaderAndBody(request, header, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
@@ -79,26 +79,20 @@ public class ServerFacade {
             throw new ResponseException(500, ex.getMessage());
         }
     }
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
-        if (request != null) {
-            http.addRequestProperty("Content-Type", "application/json");
-            String reqData = new Gson().toJson(request);
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
-            }
-        }
-    }
 
-    private static void writeHeader(String header, HttpURLConnection http) throws IOException {
+    private static void writeHeaderAndBody(Object body, String header, HttpURLConnection http) throws IOException {
+        String reqData = "";
+        if (body != null) {
+            http.addRequestProperty("Content-Type", "application/json");
+            reqData += new Gson().toJson(body);
+        }
         if (header != null) {
             http.addRequestProperty("Authorization", header);
-            String reqData = new Gson().toJson(header);
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
-            }
+        }
+        try (OutputStream reqBody = http.getOutputStream()) {
+            reqBody.write(reqData.getBytes());
         }
     }
-
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
