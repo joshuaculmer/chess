@@ -1,5 +1,7 @@
 package client;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
@@ -87,7 +89,6 @@ public class ServerFacadeTests {
     @Test
     void logoutNotSignedIn() throws Exception {
         UserData newUser = new UserData("player1", "password", "p1@email.com");
-
         try {
             facade.logout(newUser.password());
             fail();
@@ -96,6 +97,27 @@ public class ServerFacadeTests {
             assertEquals(e.statusCode(), 401);
         }
     }
+
+    @Test
+    void createGame() throws Exception {
+        record GameCreateRequest (String gameName) {}
+        GameCreateRequest createRequest = new GameCreateRequest("new Game");
+        int gameID = facade.createGame(existingAuth, createRequest);
+        System.out.println(gameID);
+    }
+
+    @Test
+    void createGameInvalid() throws Exception {
+        record GameCreateRequest (String gameName) {}
+        GameCreateRequest createRequest = new GameCreateRequest("new Game");
+        try {
+            facade.createGame("existingAuth", createRequest);
+            fail();
+        } catch (ResponseException e) {
+            assertEquals(e.statusCode(), 401);
+        }
+    }
+
 
 
 }
