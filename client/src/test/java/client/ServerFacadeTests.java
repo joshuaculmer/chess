@@ -22,6 +22,7 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
+
         facade = new ServerFacade("http://localhost:" + port + "/");
 
         existingUser = new UserData("ExistingUser", "existingUserPassword", "eu@mail.com");
@@ -75,6 +76,24 @@ public class ServerFacadeTests {
         }
         catch (ResponseException ex) {
             assertEquals("Error: Unauthorized", ex.getMessage());
+        }
+    }
+
+    @Test
+    void logout() throws Exception {
+        facade.logout(existingAuth);
+    }
+
+    @Test
+    void logoutNotSignedIn() throws Exception {
+        UserData newUser = new UserData("player1", "password", "p1@email.com");
+
+        try {
+            facade.logout(newUser.password());
+            fail();
+        }
+        catch (ResponseException e) {
+            assertEquals(e.statusCode(), 401);
         }
     }
 
