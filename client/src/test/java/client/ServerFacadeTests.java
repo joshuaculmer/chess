@@ -4,11 +4,15 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -127,6 +131,44 @@ public class ServerFacadeTests {
         assert(facade.listGames(existingAuth).size() == 1);
     }
 
+    @Test
+    void joinGame() throws Exception {
+        assert( facade.listGames(existingAuth).size() == 0 );
 
+        createGame();
+        assert(facade.listGames(existingAuth).size() == 1);
+        ArrayList<GameData> list = facade.listGames(existingAuth);
+        var data = list.getFirst();
+
+        facade.joinGame(existingAuth, ChessGame.TeamColor.WHITE, data.gameID());
+
+        UserData other = new UserData("test", "word", "mail");
+        facade.registerUser(other);
+        AuthData otherAuth = facade.loginUser(other);
+        facade.joinGame(otherAuth.authToken(), ChessGame.TeamColor.BLACK, data.gameID());
+    }
+
+    @Test
+    void joinGameTwoWhiteJoin() throws Exception {
+        assert( facade.listGames(existingAuth).size() == 0 );
+
+        createGame();
+        assert(facade.listGames(existingAuth).size() == 1);
+        ArrayList<GameData> list = facade.listGames(existingAuth);
+        var data = list.getFirst();
+
+        facade.joinGame(existingAuth, ChessGame.TeamColor.WHITE, data.gameID());
+
+        UserData other = new UserData("test", "word", "mail");
+        facade.registerUser(other);
+        AuthData otherAuth = facade.loginUser(other);
+        try {
+            facade.joinGame(otherAuth.authToken(), ChessGame.TeamColor.WHITE, data.gameID());
+            fail();
+        }
+        catch (ResponseException e) {
+            System.out.println(e.toString());
+        }
+    }
 
 }
