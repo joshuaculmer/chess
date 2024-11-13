@@ -2,6 +2,8 @@ package ui;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.AuthData;
+import model.UserData;
 
 import java.net.*;
 import java.io.*;
@@ -14,31 +16,33 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    private Object registerUser(String... params) {
+    public AuthData registerUser(String... params) throws ResponseException{
+        String path = "/user";
+        UserData userData = new UserData(params[0], params[1], params[2]);
+        return makeRequest("POST", path,userData, AuthData.class);
+    }
+
+    public Object loginuser(String... params) {
         return null;
     }
 
-    private Object loginuser(String... params) {
+    public Object logout(String... params) {
         return null;
     }
 
-    private Object logout(String... params) {
+    public Object listGames(String... params) {
         return null;
     }
 
-    private Object listGames(String... params) {
+    public Object createGame(String... params) {
         return null;
     }
 
-    private Object createGame(String... params) {
+    public Object joinGame(String... params) {
         return null;
     }
 
-    private Object joinGame(String... params) {
-        return null;
-    }
-
-    private Object clearAll(String... params) {
+    public Object clearAll(String... params) {
         return null;
     }
 
