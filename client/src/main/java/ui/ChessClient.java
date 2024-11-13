@@ -1,10 +1,14 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -144,7 +148,7 @@ public class ChessClient {
             facade.joinGame(authToken, teamColor, id);
             this.teamColor = teamColor;
             clientState = state.IN_GAME;
-            return "Joined, need to render board" + renderGame(game, teamColor);
+            return "Joined, need to render board" + renderGame(new ChessGame(), teamColor);
         }
         catch (ResponseException e) {
             return e.getMessage();
@@ -199,16 +203,24 @@ public class ChessClient {
     public String renderWhite(ChessGame game) {
 
         String result = "\n";
-        result += SET_BG_COLOR_LIGHT_GREY + "    a " + " b " + " c " + " d " + " e " + " f " + " g    \n";
-        result += SET_BG_COLOR_LIGHT_GREY + " 8 a " + " b " + " c " + " d " + " e " + " f " + " g   8 \n";
-        result += SET_BG_COLOR_LIGHT_GREY + " 7 a " + " b " + " c " + " d " + " e " + " f " + " g   7 \n";
-        result += SET_BG_COLOR_LIGHT_GREY + " 6 a " + " b " + " c " + " d " + " e " + " f " + " g   6 \n";
-        result += SET_BG_COLOR_LIGHT_GREY + " 5 a " + " b " + " c " + " d " + " e " + " f " + " g   5 \n";
-        result += SET_BG_COLOR_LIGHT_GREY + " 4 a " + " b " + " c " + " d " + " e " + " f " + " g   4 \n";
-        result += SET_BG_COLOR_LIGHT_GREY + " 3 a " + " b " + " c " + " d " + " e " + " f " + " g   3 \n";
-        result += SET_BG_COLOR_LIGHT_GREY + " 2 a " + " b " + " c " + " d " + " e " + " f " + " g   2 \n";
-        result += SET_BG_COLOR_LIGHT_GREY + " 1 a " + " b " + " c " + " d " + " e " + " f " + " g   1 \n";
-        result += SET_BG_COLOR_LIGHT_GREY + "    a " + " b " + " c " + " d " + " e " + " f " + " g    \n";
+
+        String[][] list=new String[8][8];
+        ChessBoard board = game.getBoard();
+        for(int col = 0; col < 8; col++) {
+            for(int row=0; row <8; row++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row+1, col+1));
+                list[row][col] = piece != null ? piece.toString() : " ";
+            }
+        }
+        result += SET_BG_COLOR_LIGHT_GREY + "  a  b  c  d  e  f  g  h  \n";
+        for(int row = 7; row >=  0; row--) {
+            result+=SET_BG_COLOR_LIGHT_GREY + String.valueOf(row + 1);
+            for (int col=0; col < 8; col++) {
+                result+=" " + list[row][col] + " ";
+            }
+            result+="\n";
+        }
+        result += SET_BG_COLOR_LIGHT_GREY + "  a  b  c  d  e  f  g  h  \n";
 
         return result;
     }
