@@ -37,7 +37,7 @@ public class ChessClient {
         return switch (clientState) {
             case LOGGED_OUT -> switch (cmd) {
                 case "register" -> register(params);
-                case "login" -> login();
+                case "login" -> login(params);
                 case "quit" -> "quit";
                 default -> helpLoggedOut();
             };
@@ -56,7 +56,7 @@ public class ChessClient {
 
     public String register(String... params) {
         if(params.length != 3) {
-            return helpLoggedIn();
+            return helpLoggedOut();
         }
         String username = params[0];
         String password = params[1];
@@ -65,7 +65,7 @@ public class ChessClient {
         try {
             authToken = facade.registerUser(user).authToken();
             clientState = state.LOGGED_IN;
-            return "Registered";
+            return SET_TEXT_COLOR_WHITE + "Logged In: " ;
         }
         catch (ResponseException e) {
             return e.getMessage();
@@ -73,9 +73,21 @@ public class ChessClient {
 
     }
 
-    public String login() {
-        clientState = state.LOGGED_IN;
-        return "Login: TODO";
+    public String login(String... params) {
+        if(params.length != 2) {
+            return helpLoggedOut();
+        }
+        String username = params[0];
+        String password = params[1];
+        UserData user = new UserData(username, password, null);
+        try {
+            authToken = facade.loginUser(user).authToken();
+            clientState = state.LOGGED_IN;
+            return SET_TEXT_COLOR_WHITE + "Logged In: " ;
+        }
+        catch (ResponseException e) {
+            return e.getMessage();
+        }
     }
 
     public String createGame() {
