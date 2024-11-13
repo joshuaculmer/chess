@@ -1,12 +1,15 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 
 
 public class ServerFacade {
@@ -16,34 +19,33 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    public AuthData registerUser(String... params) throws ResponseException{
+    public AuthData registerUser(UserData user) throws ResponseException{
         String path = "/user";
-        UserData userData = new UserData(params[0], params[1], params[2]);
-        return makeRequest("POST", path,userData, AuthData.class);
+        if(!user.isValid()) throw new ResponseException(400, "Error: Bad Request");
+        return makeRequest("POST", path, user, AuthData.class);
     }
 
-    public Object loginuser(String... params) {
+    public AuthData loginUser(UserData user) throws ResponseException{
         return null;
     }
 
-    public Object logout(String... params) {
+    public void logout(String AuthToken) throws ResponseException{
+    }
+
+    public ArrayList<GameData> listGames(String authToken) throws ResponseException{
         return null;
     }
 
-    public Object listGames(String... params) {
-        return null;
+    public int createGame(String authToken, String gameName) throws ResponseException{
+        return 0;
     }
 
-    public Object createGame(String... params) {
-        return null;
+    public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws ResponseException{
     }
 
-    public Object joinGame(String... params) {
-        return null;
-    }
-
-    public Object clearAll(String... params) {
-        return null;
+    public void clearAll(String... params) throws ResponseException{
+        String path = "/db";
+        makeRequest("DELETE", path, null, null);
     }
 
 

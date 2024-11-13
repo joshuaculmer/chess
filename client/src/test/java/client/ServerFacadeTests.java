@@ -1,6 +1,8 @@
 package client;
 
+import exception.ResponseException;
 import model.AuthData;
+import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
@@ -27,6 +29,11 @@ public class ServerFacadeTests {
     }
 
 
+    @BeforeEach
+    public void setUp() throws ResponseException {
+        facade.clearAll();
+    }
+
     @Test
     public void sampleTest() {
         Assertions.assertTrue(true);
@@ -36,7 +43,20 @@ public class ServerFacadeTests {
 
     @Test
     void register() throws Exception {
-        AuthData authData = facade.registerUser("player1", "password", "p1@email.com");
+        AuthData authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
         assertTrue(authData.authToken().length() > 10);
     }
+
+    @Test
+    void registerInvalid() throws Exception {
+        try {
+            AuthData authData=facade.registerUser(new UserData("player1", "password", null));
+            fail();
+        }
+        catch (ResponseException ex) {
+            assertEquals(400, ex.statusCode());
+        }
+    }
+
+
 }
