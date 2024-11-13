@@ -31,18 +31,26 @@ public class ServerFacade {
         return makeRequest("POST", path, user, AuthData.class);
     }
 
-    public void logout(String AuthToken) throws ResponseException{
+    public void logout(String authToken) throws ResponseException{
+        String path = "/session";
+        makeRequest("DELETE", path, authToken, null);
     }
 
     public ArrayList<GameData> listGames(String authToken) throws ResponseException{
-        return null;
+        String path = "/game";
+        return makeRequest("POST", path, authToken, ArrayList.class);
     }
 
     public int createGame(String authToken, String gameName) throws ResponseException{
-        return 0;
+        String path = "/game";
+        return makeRequest("POST", path, authToken, int.class);
     }
 
-    public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws ResponseException{
+    public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws ResponseException {
+        String path = "/game";
+        record JoinRequest (ChessGame.TeamColor playerColor, int gameID){}
+        JoinRequest request = new JoinRequest(color, gameID);
+        makeRequest("PUT", path, request, null);
     }
 
     public void clearAll(String... params) throws ResponseException{
