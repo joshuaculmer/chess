@@ -27,7 +27,6 @@ public class ServerFacade {
 
     public AuthData loginUser(UserData user) throws ResponseException{
         String path = "/session";
-        if(!user.isValid()) throw new ResponseException(400, "Error: Bad Request");
         return makeRequest("POST", path, user, null,  AuthData.class);
     }
 

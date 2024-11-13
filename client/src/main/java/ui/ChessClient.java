@@ -17,6 +17,9 @@ public class ChessClient {
     private ChessGame game;
     private int gameID;
 
+    private final String loggedOutIntro = SET_TEXT_COLOR_WHITE + "Logged Out:" ;
+    private final String loggedInIntro = SET_TEXT_COLOR_WHITE + "Logged In:" ;
+
     enum state {
         LOGGED_OUT,
         LOGGED_IN,
@@ -65,7 +68,7 @@ public class ChessClient {
         try {
             authToken = facade.registerUser(user).authToken();
             clientState = state.LOGGED_IN;
-            return SET_TEXT_COLOR_WHITE + "Logged In: " ;
+            return loggedInIntro;
         }
         catch (ResponseException e) {
             return e.getMessage();
@@ -83,7 +86,7 @@ public class ChessClient {
         try {
             authToken = facade.loginUser(user).authToken();
             clientState = state.LOGGED_IN;
-            return SET_TEXT_COLOR_WHITE + "Logged In: " ;
+            return loggedInIntro;
         }
         catch (ResponseException e) {
             return e.getMessage();
@@ -108,8 +111,15 @@ public class ChessClient {
     }
 
     public String logout() {
-        clientState = state.LOGGED_OUT;
-        return "Logout: TODO";
+        try {
+            facade.logout(authToken);
+            authToken = "";
+            clientState = state.LOGGED_OUT;
+            return loggedOutIntro;
+        }
+        catch (ResponseException e) {
+            return "Couldn't logout :/";
+        }
     }
 
 
@@ -119,7 +129,7 @@ public class ChessClient {
                 SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD> "+ SET_TEXT_COLOR_YELLOW + "- to play chess\n" +
                 SET_TEXT_COLOR_BLUE + "quit "+ SET_TEXT_COLOR_YELLOW + "- playing chess\n" +
                 SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n" +
-                SET_TEXT_COLOR_WHITE + "Logged Out:" ;
+                loggedOutIntro;
     }
 
     public String helpLoggedIn() {
@@ -130,7 +140,7 @@ public class ChessClient {
                 SET_TEXT_COLOR_BLUE +"logout "+ SET_TEXT_COLOR_YELLOW + "- when you are done\n" +
                 SET_TEXT_COLOR_BLUE + "quit "+ SET_TEXT_COLOR_YELLOW + "- playing chess\n" +
                 SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n" +
-                SET_TEXT_COLOR_WHITE + "Logged In: " ;
+                loggedInIntro;
     }
 
     public String helpInGame() {
