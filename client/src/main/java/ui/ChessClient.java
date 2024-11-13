@@ -17,6 +17,7 @@ public class ChessClient {
     private final ServerFacade facade;
     private String authToken = "";
     private ChessGame game;
+    private ChessGame.TeamColor teamColor;
     private int gameID;
 
     private final String loggedOutIntro = SET_TEXT_COLOR_WHITE + "Logged Out:" ;
@@ -141,8 +142,9 @@ public class ChessClient {
                 ChessGame.TeamColor.BLACK : teamColor;
         try {
             facade.joinGame(authToken, teamColor, id);
+            this.teamColor = teamColor;
             clientState = state.IN_GAME;
-            return "Joined, need to render board";
+            return "Joined, need to render board" + renderGame(game, teamColor);
         }
         catch (ResponseException e) {
             return e.getMessage();
@@ -188,5 +190,30 @@ public class ChessClient {
 
     public String helpInGame() {
         return "TODO: Implement game commands";
+    }
+
+    public String renderGame(ChessGame game, ChessGame.TeamColor color) {
+        return renderBlack(game) + renderWhite(game);
+    }
+
+    public String renderWhite(ChessGame game) {
+
+        String result = "\n";
+        result += SET_BG_COLOR_LIGHT_GREY + "    a " + " b " + " c " + " d " + " e " + " f " + " g    \n";
+        result += SET_BG_COLOR_LIGHT_GREY + " 8 a " + " b " + " c " + " d " + " e " + " f " + " g   8 \n";
+        result += SET_BG_COLOR_LIGHT_GREY + " 7 a " + " b " + " c " + " d " + " e " + " f " + " g   7 \n";
+        result += SET_BG_COLOR_LIGHT_GREY + " 6 a " + " b " + " c " + " d " + " e " + " f " + " g   6 \n";
+        result += SET_BG_COLOR_LIGHT_GREY + " 5 a " + " b " + " c " + " d " + " e " + " f " + " g   5 \n";
+        result += SET_BG_COLOR_LIGHT_GREY + " 4 a " + " b " + " c " + " d " + " e " + " f " + " g   4 \n";
+        result += SET_BG_COLOR_LIGHT_GREY + " 3 a " + " b " + " c " + " d " + " e " + " f " + " g   3 \n";
+        result += SET_BG_COLOR_LIGHT_GREY + " 2 a " + " b " + " c " + " d " + " e " + " f " + " g   2 \n";
+        result += SET_BG_COLOR_LIGHT_GREY + " 1 a " + " b " + " c " + " d " + " e " + " f " + " g   1 \n";
+        result += SET_BG_COLOR_LIGHT_GREY + "    a " + " b " + " c " + " d " + " e " + " f " + " g    \n";
+
+        return result;
+    }
+
+    public String renderBlack(ChessGame game) {
+        return "";
     }
 }
