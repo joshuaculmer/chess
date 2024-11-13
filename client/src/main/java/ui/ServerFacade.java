@@ -43,8 +43,10 @@ public class ServerFacade {
         return temp.games();
     }
 
-    public int createGame(String authToken, Object createRequest) throws ResponseException{
+    public int createGame(String authToken, String gameName) throws ResponseException{
         String path = "/game";
+        record GameCreateRequest (String gameName) {}
+        GameCreateRequest createRequest = new GameCreateRequest(gameName);
         record GameID (int gameID) {};
         return makeRequest("POST", path, createRequest, authToken, GameID.class).gameID;
     }

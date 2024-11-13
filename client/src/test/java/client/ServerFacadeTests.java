@@ -100,18 +100,14 @@ public class ServerFacadeTests {
 
     @Test
     void createGame() throws Exception {
-        record GameCreateRequest (String gameName) {}
-        GameCreateRequest createRequest = new GameCreateRequest("new Game");
-        int gameID = facade.createGame(existingAuth, createRequest);
+        int gameID = facade.createGame(existingAuth, "new game");
         System.out.println(gameID);
     }
 
     @Test
     void createGameInvalid() throws Exception {
-        record GameCreateRequest (String gameName) {}
-        GameCreateRequest createRequest = new GameCreateRequest("new Game");
         try {
-            facade.createGame("existingAuth", createRequest);
+            facade.createGame("existingAuth", "new game");
             fail();
         } catch (ResponseException e) {
             assertEquals(e.statusCode(), 401);
