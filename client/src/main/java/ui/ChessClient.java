@@ -49,7 +49,7 @@ public class ChessClient {
             case LOGGED_IN -> switch (cmd) {
                 case "create" -> createGame();
                 case "list" -> listGames();
-                case "join" -> joinGame();
+                case "join" -> joinGame(params);
                 case "observe" -> observeGame();
                 case "logout" -> logout();
                 case "quit" -> "quit";
@@ -119,9 +119,24 @@ public class ChessClient {
         }
     }
 
-    public String joinGame() {
-        clientState = state.IN_GAME;
-        return "Join Game: TODO";
+    public String joinGame(String... params) {
+        if(params.length != 2) {
+            return helpLoggedIn();
+        }
+        int id = Integer.parseInt(params[0]);
+        String color = params[1];
+        ChessGame.TeamColor teamColor = color.equals("WHITE") || color.equals("white") || color.equals("W") || color.equals("w") ?
+        ChessGame.TeamColor.WHITE : null;
+        teamColor = color.equals("BLACK") || color.equals("black") || color.equals("B") || color.equals("b") ?
+                ChessGame.TeamColor.BLACK : teamColor;
+        try {
+            facade.joinGame(authToken, teamColor, id);
+            clientState = state.IN_GAME;
+            return "Joined, need to render board";
+        }
+        catch (ResponseException e) {
+            return e.getMessage();
+        }
     }
 
     public String observeGame() {
