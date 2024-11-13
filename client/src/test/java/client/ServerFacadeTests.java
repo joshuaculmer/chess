@@ -118,6 +118,19 @@ public class ServerFacadeTests {
         }
     }
 
+    @Test
+    void listGamesEmpty() throws Exception {
+        assert( facade.listGames(existingAuth).size() == 0 );
+    }
+
+    @Test
+    void listGamesNotEmpty() throws Exception {
+        assert( facade.listGames(existingAuth).size() == 0 );
+
+        createGame();
+        assert(facade.listGames(existingAuth).size() == 1);
+    }
+
 
 
 }

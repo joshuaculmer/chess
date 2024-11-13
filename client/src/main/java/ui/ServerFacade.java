@@ -38,7 +38,9 @@ public class ServerFacade {
 
     public ArrayList<GameData> listGames(String authToken) throws ResponseException{
         String path = "/game";
-        return makeRequest("POST", path, null, authToken, ArrayList.class);
+        record gamesList (ArrayList games) {};
+        var temp = makeRequest("GET", path, null, authToken, gamesList.class);
+        return temp.games();
     }
 
     public int createGame(String authToken, Object createRequest) throws ResponseException{
@@ -82,15 +84,15 @@ public class ServerFacade {
 
     private static void writeHeaderAndBody(Object body, String header, HttpURLConnection http) throws IOException {
         String reqData = "";
-        if (body != null) {
-            http.addRequestProperty("Content-Type", "application/json");
-            reqData += new Gson().toJson(body);
-        }
         if (header != null) {
             http.addRequestProperty("Authorization", header);
         }
-        try (OutputStream reqBody = http.getOutputStream()) {
-            reqBody.write(reqData.getBytes());
+        if (body != null) {
+            http.addRequestProperty("Content-Type", "application/json");
+            reqData += new Gson().toJson(body);
+            try (OutputStream reqBody = http.getOutputStream()) {
+                reqBody.write(reqData.getBytes());
+            }
         }
     }
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
