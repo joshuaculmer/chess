@@ -14,6 +14,8 @@ public class ServerFacadeTests {
 
     private static Server server;
     static ServerFacade facade;
+    static UserData existingUser;
+    static String existingAuth;
 
     @BeforeAll
     public static void init() {
@@ -21,6 +23,9 @@ public class ServerFacadeTests {
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade("http://localhost:" + port + "/");
+
+        existingUser = new UserData("ExistingUser", "existingUserPassword", "eu@mail.com");
+
     }
 
     @AfterAll
@@ -32,13 +37,10 @@ public class ServerFacadeTests {
     @BeforeEach
     public void setUp() throws ResponseException {
         facade.clearAll();
-    }
+        AuthData regResult = facade.registerUser(existingUser);
+        existingAuth = regResult.authToken();
 
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
     }
-
 
 
     @Test
@@ -55,6 +57,24 @@ public class ServerFacadeTests {
         }
         catch (ResponseException ex) {
             assertEquals(400, ex.statusCode());
+        }
+    }
+
+
+    @Test
+    void login() throws Exception {
+        AuthData result = facade.loginUser(existingUser);
+        assertEquals(result.username(), existingUser.username());
+    }
+
+    @Test
+    void loginInvalid() throws Exception {
+        try {
+            facade.loginUser(new UserData("test", "testpw", "boogus@gmail.com"));
+            fail();
+        }
+        catch (ResponseException ex) {
+            assertEquals("Error: Unauthorized", ex.getMessage());
         }
     }
 

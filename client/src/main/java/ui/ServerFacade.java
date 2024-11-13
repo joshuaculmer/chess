@@ -26,7 +26,9 @@ public class ServerFacade {
     }
 
     public AuthData loginUser(UserData user) throws ResponseException{
-        return null;
+        String path = "/session";
+        if(!user.isValid()) throw new ResponseException(400, "Error: Bad Request");
+        return makeRequest("POST", path, user, AuthData.class);
     }
 
     public void logout(String AuthToken) throws ResponseException{
@@ -78,7 +80,7 @@ public class ServerFacade {
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
+            throw new ResponseException(status, "Error: " + http.getResponseMessage());
         }
     }
 
