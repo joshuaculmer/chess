@@ -225,12 +225,7 @@ public class ChessClient {
         ChessBoard board = game.getBoard();
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
         for(int row = 7; row >=  0; row--) {
-            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
-            for (int col=0; col < 8; col++) {
-                result += renderPiece(board, row, col);
-            }
-            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
-            result+="\n";
+            result += renderPieces(board, row);
         }
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
 
@@ -242,15 +237,21 @@ public class ChessClient {
         ChessBoard board = game.getBoard();
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
         for(int row = 0; row <  8; row++) {
-            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
-            for (int col=0; col < 8; col++) {
-                result += renderPiece(board, row, col);
-            }
-            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
-            result+="\n";
+            result += renderPieces(board, row);
         }
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
 
+        return result;
+    }
+
+    public String renderPieces(ChessBoard board, int row) {
+        String result = "";
+        result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
+        for (int col=0; col < 8; col++) {
+            result += renderPiece(board, row, col);
+        }
+        result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
+        result+="\n";
         return result;
     }
 
