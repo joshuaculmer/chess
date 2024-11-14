@@ -203,15 +203,7 @@ public class ChessClient {
     public String renderWhite(ChessGame game) {
 
         String result = "\n";
-
-//        String[][] list=new String[8][8];
         ChessBoard board = game.getBoard();
-//        for(int col = 0; col < 8; col++) {
-//            for(int row=0; row <8; row++) {
-//                ChessPiece piece = board.getPiece(new ChessPosition(row+1, col+1));
-//                list[row][col] = piece != null ? piece.toString() : " ";
-//            }
-//        }
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
         for(int row = 7; row >=  0; row--) {
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
@@ -246,6 +238,37 @@ public class ChessClient {
     }
 
     public String renderBlack(ChessGame game) {
-        return "";
+        String result = "\n";
+        ChessBoard board = game.getBoard();
+        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
+        for(int row = 0; row <  8; row++) {
+            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
+            for (int col=0; col < 8; col++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row+1, col+1));
+                if((col + row) % 2 == 0) {
+                    result += SET_BG_COLOR_BLACK;
+                }
+                else {
+                    result += SET_BG_COLOR_DARK_GREY;
+                }
+                if(piece != null) {
+                    if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        result += SET_TEXT_COLOR_BLUE;
+                    }
+                    else {
+                        result += SET_TEXT_COLOR_RED;
+                    }
+                    result += " " + piece + " ";
+                }
+                else {
+                    result += "   ";
+                }
+            }
+            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
+            result+="\n";
+        }
+        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
+
+        return result;
     }
 }
