@@ -17,7 +17,7 @@ import static ui.EscapeSequences.*;
 
 public class ChessClient {
 
-    private state clientState = state.LOGGED_OUT;
+    private State clientState = State.LOGGED_OUT;
     private final ServerFacade facade;
     private String authToken = "";
     private ChessGame game = new ChessGame();
@@ -29,7 +29,7 @@ public class ChessClient {
     private final String loggedOutIntro = SET_TEXT_COLOR_WHITE + "Logged Out:" ;
     private final String loggedInIntro = SET_TEXT_COLOR_WHITE + "Logged In:" ;
 
-    enum state {
+    enum State {
         LOGGED_OUT,
         LOGGED_IN,
         IN_GAME
@@ -80,7 +80,7 @@ public class ChessClient {
         UserData user = new UserData(username, password, email);
         try {
             authToken = facade.registerUser(user).authToken();
-            clientState = state.LOGGED_IN;
+            clientState = State.LOGGED_IN;
             return loggedInIntro;
         }
         catch (ResponseException e) {
@@ -98,7 +98,7 @@ public class ChessClient {
         UserData user = new UserData(username, password, null);
         try {
             authToken = facade.loginUser(user).authToken();
-            clientState = state.LOGGED_IN;
+            clientState = State.LOGGED_IN;
             return loggedInIntro;
         }
         catch (ResponseException e) {
@@ -168,7 +168,7 @@ public class ChessClient {
         try {
             facade.joinGame(authToken, teamColor, id);
             this.teamColor = teamColor;
-            clientState = state.IN_GAME;
+            clientState = State.IN_GAME;
             return "Joined, need to render board" + renderGame(new ChessGame(), teamColor);
         }
         catch (ResponseException e) {
@@ -185,7 +185,7 @@ public class ChessClient {
         try {
             facade.logout(authToken);
             authToken = "";
-            clientState = state.LOGGED_OUT;
+            clientState = State.LOGGED_OUT;
             return loggedOutIntro;
         }
         catch (ResponseException e) {
@@ -214,9 +214,6 @@ public class ChessClient {
                 loggedInIntro;
     }
 
-    public String helpInGame() {
-        return "TODO: Implement game commands";
-    }
 
     public String renderGame(ChessGame game, ChessGame.TeamColor color) {
         return renderBlack(game) + renderWhite(game);
@@ -230,26 +227,7 @@ public class ChessClient {
         for(int row = 7; row >=  0; row--) {
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
             for (int col=0; col < 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row+1, col+1));
-                if((col + row) % 2 == 0) {
-                    result += SET_BG_COLOR_BLACK;
-                }
-                else {
-                    result += SET_BG_COLOR_DARK_GREY;
-                }
-
-                if(piece != null) {
-                    if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                        result += SET_TEXT_COLOR_BLUE;
-                    }
-                    else {
-                        result += SET_TEXT_COLOR_RED;
-                    }
-                    result += " " + piece + " ";
-                }
-                else {
-                    result += "   ";
-                }
+                result += renderPiece(board, row, col);
             }
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
             result+="\n";
@@ -266,31 +244,37 @@ public class ChessClient {
         for(int row = 0; row <  8; row++) {
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
             for (int col=0; col < 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row+1, col+1));
-                if((col + row) % 2 == 0) {
-                    result += SET_BG_COLOR_BLACK;
-                }
-                else {
-                    result += SET_BG_COLOR_DARK_GREY;
-                }
-                if(piece != null) {
-                    if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                        result += SET_TEXT_COLOR_BLUE;
-                    }
-                    else {
-                        result += SET_TEXT_COLOR_RED;
-                    }
-                    result += " " + piece + " ";
-                }
-                else {
-                    result += "   ";
-                }
+                result += renderPiece(board, row, col);
             }
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
             result+="\n";
         }
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
 
+        return result;
+    }
+
+    public String renderPiece(ChessBoard board, int row, int col) {
+        String result = "";
+        ChessPiece piece = board.getPiece(new ChessPosition(row+1, col+1));
+        if((col + row) % 2 == 0) {
+            result += SET_BG_COLOR_BLACK;
+        }
+        else {
+            result += SET_BG_COLOR_DARK_GREY;
+        }
+        if(piece != null) {
+            if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                result += SET_TEXT_COLOR_BLUE;
+            }
+            else {
+                result += SET_TEXT_COLOR_RED;
+            }
+            result += " " + piece + " ";
+        }
+        else {
+            result += "   ";
+        }
         return result;
     }
 }

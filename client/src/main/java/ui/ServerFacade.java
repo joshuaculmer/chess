@@ -37,8 +37,8 @@ public class ServerFacade {
 
     public ArrayList<GameData> listGames(String authToken) throws ResponseException{
         String path = "/game";
-        record gamesList (ArrayList<GameData> games) {};
-        var temp = makeRequest("GET", path, null, authToken, gamesList.class);
+        record GamesList (ArrayList<GameData> games) {};
+        var temp = makeRequest("GET", path, null, authToken, GamesList.class);
         return temp.games();
     }
 
@@ -61,12 +61,6 @@ public class ServerFacade {
         String path = "/db";
         makeRequest("DELETE", path, null, null, null);
     }
-
-    public void observe(String... params) throws ResponseException {
-
-    }
-
-
 
 
     private <T> T makeRequest(String method, String path, Object request, String header, Class<T> responseClass) throws ResponseException {
