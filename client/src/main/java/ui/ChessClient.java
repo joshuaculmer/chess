@@ -23,6 +23,7 @@ public class ChessClient {
     private ChessGame game = new ChessGame();
     private ChessGame.TeamColor teamColor;
     private int gameID;
+    private ArrayList<GameData> gamesList;
 
 
     private final String loggedOutIntro = SET_TEXT_COLOR_WHITE + "Logged Out:" ;
@@ -61,7 +62,11 @@ public class ChessClient {
                 case "quit" -> "quit";
                 default -> helpLoggedIn();
             };
-            case IN_GAME -> "Game would render here";
+            case IN_GAME -> switch(cmd) {
+                case "logout" -> logout();
+                case "quit" -> "quit";
+                default -> "Game would render here";
+            };
         };
     }
 
@@ -117,14 +122,14 @@ public class ChessClient {
 
     public String listGames() {
         try {
-            ArrayList<GameData> list =  facade.listGames(authToken);
-            if(list.isEmpty()) {
+            gamesList =  facade.listGames(authToken);
+            if(gamesList.isEmpty()) {
                 return "No games have been created, type create *gameName* to start a new game!";
             }
             else {
                 String result = "";
                 int id = 1;
-                for(GameData game : list) {
+                for(GameData game : gamesList) {
                     result += SET_TEXT_COLOR_BLUE + id + ":" + SET_TEXT_COLOR_WHITE + " \n";
                     result += game.gameName() + "\n";
                     if(game.whiteUsername() != null) {
@@ -154,6 +159,12 @@ public class ChessClient {
         ChessGame.TeamColor.WHITE : null;
         teamColor = color.equals("BLACK") || color.equals("black") || color.equals("B") || color.equals("b") ?
                 ChessGame.TeamColor.BLACK : teamColor;
+        if(id-1 < gamesList.size()) {
+            id = gamesList.get(id-1).gameID();
+        }
+        else {
+            return "Please enter a valid game ID";
+        }
         try {
             facade.joinGame(authToken, teamColor, id);
             this.teamColor = teamColor;
