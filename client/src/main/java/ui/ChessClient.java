@@ -26,8 +26,8 @@ public class ChessClient {
     private ArrayList<GameData> gamesList;
 
 
-    private final String loggedOutIntro = SET_TEXT_COLOR_WHITE + "Logged Out:" ;
-    private final String loggedInIntro = SET_TEXT_COLOR_WHITE + "Logged In:" ;
+    private final String loggedOutIntro = SET_TEXT_COLOR_WHITE + "Logged Out>>>" ;
+    private final String loggedInIntro = SET_TEXT_COLOR_WHITE + "Logged In>>>" ;
 
     enum State {
         LOGGED_OUT,
@@ -51,7 +51,7 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "quit" -> "quit";
-                default -> helpLoggedOut();
+                default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
             case LOGGED_IN -> switch (cmd) {
                 case "create" -> createGame(params);
@@ -60,7 +60,7 @@ public class ChessClient {
                 case "observe" -> observeGame(params);
                 case "logout" -> logout();
                 case "quit" -> "quit";
-                default -> helpLoggedIn();
+                default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
             case IN_GAME -> switch(cmd) {
                 case "logout" -> logout();
@@ -72,7 +72,7 @@ public class ChessClient {
 
     public String register(String... params) {
         if(params.length != 3) {
-            return helpLoggedOut();
+            return SET_TEXT_COLOR_RED + "Use format: register __username__ __password__ __email__\n";
         }
         String username = params[0];
         String password = params[1];
@@ -84,14 +84,14 @@ public class ChessClient {
             return loggedInIntro;
         }
         catch (ResponseException e) {
-            return e.getMessage();
+            return e.getMessage() + "\n";
         }
 
     }
 
     public String login(String... params) {
         if(params.length != 2) {
-            return helpLoggedOut();
+            return SET_TEXT_COLOR_RED + "Use format: login __username__ __password__ __email__";
         }
         String username = params[0];
         String password = params[1];
@@ -102,21 +102,23 @@ public class ChessClient {
             return loggedInIntro;
         }
         catch (ResponseException e) {
-            return e.getMessage();
+            return SET_TEXT_COLOR_RED + e.getMessage()+ "\n";
         }
     }
 
     public String createGame(String... params) {
-        if(params.length > 1) {
-            return helpLoggedIn();
+        String gameName = "";
+        if(params.length >= 1) {
+            for(int i = 0; i < params.length; i++) {
+                gameName += params[i];
+            }
         }
-        String gameName = params[0];
         try {
             facade.createGame(authToken, gameName);
             return  "Game created";
         }
         catch (ResponseException e) {
-            return e.getMessage();
+            return e.getMessage()+ "\n";
         }
     }
 
@@ -142,28 +144,39 @@ public class ChessClient {
                 }
                 return result;
             }
-
         }
         catch (ResponseException e) {
-            return e.getMessage();
+            return SET_TEXT_COLOR_RED + e.getMessage()+ "\n";
         }
     }
 
     public String joinGame(String... params) {
         if(params.length != 2) {
-            return helpLoggedIn();
+            return SET_TEXT_COLOR_RED + "Use format Join __id__ __white/black__\n";
         }
-        int id = Integer.parseInt(params[0]);
+        int id =0;
+        try {
+            id=Integer.parseInt(params[0]);
+            if(id>gamesList.size() || id <= 0) {
+                return SET_TEXT_COLOR_RED + "Please enter a valid id\n";
+            }
+        }
+        catch (Exception e) {
+            return SET_TEXT_COLOR_RED + "Error Occured\n";
+        }
         String color = params[1];
         ChessGame.TeamColor teamColor = color.equals("WHITE") || color.equals("white") || color.equals("W") || color.equals("w") ?
         ChessGame.TeamColor.WHITE : null;
         teamColor = color.equals("BLACK") || color.equals("black") || color.equals("B") || color.equals("b") ?
                 ChessGame.TeamColor.BLACK : teamColor;
+        if(teamColor == null) {
+            return SET_TEXT_COLOR_RED + "Use format Join __id__ __white/black__\n";
+        }
         if(id-1 < gamesList.size()) {
             id = gamesList.get(id-1).gameID();
         }
         else {
-            return "Please enter a valid game ID";
+            return SET_TEXT_COLOR_RED + "Please enter a valid game ID";
         }
         try {
             facade.joinGame(authToken, teamColor, id);
@@ -172,12 +185,14 @@ public class ChessClient {
             return "Joined, need to render board" + renderGame(new ChessGame(), teamColor);
         }
         catch (ResponseException e) {
-            return e.getMessage();
+            return e.getMessage()+ "\n";
         }
     }
 
     public String observeGame(String... params) {
-
+        if( params.length != 1) {
+            return SET_TEXT_COLOR_RED + "Use format observe __id__\n";
+        }
         return renderGame(game, null);
     }
 
@@ -189,7 +204,7 @@ public class ChessClient {
             return loggedOutIntro;
         }
         catch (ResponseException e) {
-            return "Couldn't logout :/";
+            return SET_TEXT_COLOR_RED + "Couldn't logout\n";
         }
     }
 
@@ -220,7 +235,6 @@ public class ChessClient {
     }
 
     public String renderWhite(ChessGame game) {
-
         String result = "\n";
         ChessBoard board = game.getBoard();
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
@@ -235,11 +249,11 @@ public class ChessClient {
     public String renderBlack(ChessGame game) {
         String result = "\n";
         ChessBoard board = game.getBoard();
-        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
+        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
         for(int row = 0; row <  8; row++) {
             result += renderPieces(board, row);
         }
-        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
+        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
 
         return result;
     }
