@@ -200,6 +200,16 @@ public class ChessClient {
         if( params.length != 1) {
             return SET_TEXT_COLOR_RED + "Use format observe __id__\n";
         }
+        int id =0;
+        try {
+            id=Integer.parseInt(params[0]);
+            if(id>gamesList.size() || id <= 0) {
+                return SET_TEXT_COLOR_RED + "Please enter a valid id\n";
+            }
+        }
+        catch (Exception e) {
+            return SET_TEXT_COLOR_RED + "Error Occured\n";
+        }
         return renderGame(game, null);
     }
 
@@ -231,7 +241,6 @@ public class ChessClient {
                 SET_TEXT_COLOR_BLUE +"join <ID> [WHITE|BLACK] "+ SET_TEXT_COLOR_YELLOW + "- a game\n" +
                 SET_TEXT_COLOR_BLUE + "observe <ID> "+ SET_TEXT_COLOR_YELLOW + "- a game\n" +
                 SET_TEXT_COLOR_BLUE +"logout "+ SET_TEXT_COLOR_YELLOW + "- when you are done\n" +
-                SET_TEXT_COLOR_BLUE + "quit "+ SET_TEXT_COLOR_YELLOW + "- playing chess\n" +
                 SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n" +
                 loggedInIntro;
     }
