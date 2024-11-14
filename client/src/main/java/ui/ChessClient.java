@@ -51,6 +51,7 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "quit" -> "quit";
+                case "help" -> helpLoggedOut();
                 default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
             case LOGGED_IN -> switch (cmd) {
@@ -60,6 +61,7 @@ public class ChessClient {
                 case "observe" -> observeGame(params);
                 case "logout" -> logout();
                 case "quit" -> "quit";
+                case "help" -> helpLoggedIn();
                 default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
             case IN_GAME -> switch(cmd) {
