@@ -60,7 +60,6 @@ public class ChessClient {
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
                 case "logout" -> logout();
-                case "quit" -> "quit";
                 case "help" -> helpLoggedIn();
                 default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
@@ -139,8 +138,14 @@ public class ChessClient {
                     if(game.whiteUsername() != null) {
                         result += SET_TEXT_COLOR_YELLOW + "White: " + SET_TEXT_COLOR_BLUE + game.whiteUsername() + "\n";
                     }
+                    else {
+                        result += SET_TEXT_COLOR_YELLOW + "White: " + SET_TEXT_COLOR_BLUE + "White Available" + "\n";
+                    }
                     if(game.blackUsername() != null) {
                         result += SET_TEXT_COLOR_YELLOW + "Black: " + SET_TEXT_COLOR_BLUE + game.blackUsername() + "\n";
+                    }
+                    else {
+                        result += SET_TEXT_COLOR_YELLOW + "Black: " + SET_TEXT_COLOR_BLUE + "Black Available" + "\n";
                     }
                     id++;
                 }
@@ -252,8 +257,13 @@ public class ChessClient {
         String result = "\n";
         ChessBoard board = game.getBoard();
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
-        for(int row = 0; row <  8; row++) {
-            result += renderPieces(board, row);
+        for(int row = 0; row <8; row++) {
+            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
+            for (int col=7; col >= 0; col--) {
+                result += renderPiece(board, row, col);
+            }
+            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
+            result+="\n";
         }
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
 
