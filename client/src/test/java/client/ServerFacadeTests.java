@@ -49,6 +49,28 @@ public class ServerFacadeTests {
 
     }
 
+    @Test
+    void clearAllUser() throws Exception {
+        facade.clearAll();
+        try {
+            facade.loginUser(existingUser);
+            fail();
+        }
+        catch (ResponseException e) {
+            assertEquals(401, e.statusCode());
+        }
+    }
+
+    @Test
+    void clearAllGames() throws Exception {
+        facade.clearAll();
+        facade.registerUser(existingUser);
+        existingAuth = facade.loginUser(existingUser).authToken();
+        ArrayList<GameData> list = facade.listGames(existingAuth);
+        assert(list.isEmpty());
+    }
+
+
 
     @Test
     void register() throws Exception {
