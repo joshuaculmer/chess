@@ -20,7 +20,7 @@ public class ChessClient {
     private state clientState = state.LOGGED_OUT;
     private final ServerFacade facade;
     private String authToken = "";
-    private ChessGame game;
+    private ChessGame game = new ChessGame();
     private ChessGame.TeamColor teamColor;
     private int gameID;
 
@@ -166,7 +166,8 @@ public class ChessClient {
     }
 
     public String observeGame(String... params) {
-        return "Observe Game: TODO";
+
+        return renderGame(game, null);
     }
 
     public String logout() {

@@ -62,6 +62,11 @@ public class ServerFacade {
         makeRequest("DELETE", path, null, null, null);
     }
 
+    public void observe(String... params) throws ResponseException {
+
+    }
+
+
 
 
     private <T> T makeRequest(String method, String path, Object request, String header, Class<T> responseClass) throws ResponseException {
