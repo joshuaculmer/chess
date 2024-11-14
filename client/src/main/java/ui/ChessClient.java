@@ -24,6 +24,7 @@ public class ChessClient {
     private ChessGame.TeamColor teamColor;
     private int gameID;
 
+
     private final String loggedOutIntro = SET_TEXT_COLOR_WHITE + "Logged Out:" ;
     private final String loggedInIntro = SET_TEXT_COLOR_WHITE + "Logged In:" ;
 
@@ -55,7 +56,7 @@ public class ChessClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
-                case "observe" -> observeGame();
+                case "observe" -> observeGame(params);
                 case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> helpLoggedIn();
@@ -122,8 +123,17 @@ public class ChessClient {
             }
             else {
                 String result = "";
+                int id = 1;
                 for(GameData game : list) {
-                    result += game.gameID() + "\n";
+                    result += SET_TEXT_COLOR_BLUE + id + ":" + SET_TEXT_COLOR_WHITE + " \n";
+                    result += game.gameName() + "\n";
+                    if(game.whiteUsername() != null) {
+                        result += SET_TEXT_COLOR_YELLOW + "White: " + SET_TEXT_COLOR_BLUE + game.whiteUsername() + "\n";
+                    }
+                    if(game.blackUsername() != null) {
+                        result += SET_TEXT_COLOR_YELLOW + "Black: " + SET_TEXT_COLOR_BLUE + game.blackUsername() + "\n";
+                    }
+                    id++;
                 }
                 return result;
             }
@@ -155,7 +165,7 @@ public class ChessClient {
         }
     }
 
-    public String observeGame() {
+    public String observeGame(String... params) {
         return "Observe Game: TODO";
     }
 
