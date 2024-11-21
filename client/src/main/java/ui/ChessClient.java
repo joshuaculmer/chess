@@ -65,8 +65,11 @@ public class ChessClient {
                 default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
             case IN_GAME -> switch(cmd) {
-                case "logout" -> logout();
-                case "quit" -> "quit";
+                case "redraw" -> redraw();
+                case "move" -> move(params);
+                case "leave" -> leave();
+                case "resign" -> resign();
+                case "help" -> helpInGame();
                 default -> "Game would render here";
             };
         };
@@ -246,6 +249,31 @@ public class ChessClient {
                 loggedInIntro;
     }
 
+    public String move(String... params) {
+        return "TODO: implement move\n";
+    }
+
+    public String redraw() {
+        return "TODO: implement redraw\n";
+    }
+
+    public String leave() {
+        return "TODO: implement leave\n";
+    }
+
+    public String resign() {
+        return "TODO: implement resign\n";
+    }
+
+    public String helpInGame() {
+        return SET_TEXT_COLOR_BLUE +"Move <START> <END> "+ SET_TEXT_COLOR_YELLOW + "- a piece to another spot\n" +
+                SET_TEXT_COLOR_BLUE + "Redraw "+ SET_TEXT_COLOR_YELLOW + "- the board\n" +
+                SET_TEXT_COLOR_BLUE +"Leave "+ SET_TEXT_COLOR_YELLOW + "- the game\n" +
+                SET_TEXT_COLOR_BLUE + "Resign <ID> "+ SET_TEXT_COLOR_YELLOW + "- the game\n" +
+                SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n" +
+                loggedInIntro;
+    }
+
 
     public String renderGame(ChessGame game, ChessGame.TeamColor color) {
         return renderBlack(game) + renderWhite(game);
@@ -315,6 +343,7 @@ public class ChessClient {
         return result;
     }
 
+    // Stubbed method, to remove later
     public String send(String... params) {
         try {
             facade.send(params[0]);
