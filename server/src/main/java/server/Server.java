@@ -79,6 +79,7 @@ public class Server {
     public Object loginUser(Request req, Response res) throws ResponseException{
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = userSerivceInstance.login(userData);
+
         return new Gson().toJson(authData);
     }
 

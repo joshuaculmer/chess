@@ -6,10 +6,10 @@ import org.eclipse.jetty.websocket.api.Session;
 import java.io.IOException;
 
 public class Connection {
-    private String userName;
-    private String authToken;
-    private int gameID;
-    private ChessGame.TeamColor color;
+    public String userName;
+    public String authToken;
+    public int gameID;
+    public ChessGame.TeamColor color;
     public Session session;
 
     public Connection(String username, Session session, String authToken, int gameID, ChessGame.TeamColor color) {

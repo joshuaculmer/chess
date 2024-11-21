@@ -6,6 +6,8 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import websocket.commands.UserGameCommand;
+
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -59,6 +61,27 @@ public class ServerFacade extends Endpoint {
         record JoinRequest (ChessGame.TeamColor playerColor, int gameID){}
         JoinRequest request = new JoinRequest(color, gameID);
         makeRequest("PUT", path, request, authToken,  null);
+
+        container = ContainerProvider.getWebSocketContainer();
+        try {
+            this.session=container.connectToServer(this, new URI("ws://localhost:8080/ws"));
+        }
+        catch (Exception e) {
+            System.out.println("URL not configured properly ");
+        }
+        this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            public void onMessage(String message) {
+                System.out.println(message);
+            }
+        });
+
+        UserGameCommand usercmd = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        try {
+            this.session.getBasicRemote().sendText(new Gson().toJson(usercmd, UserGameCommand.class));
+        }
+        catch (Exception e) {
+            System.out.println("Couldn't convert websocket cmd to gson, line 83" + e.toString());
+        }
     }
 
     public void clearAll(String... params) throws ResponseException{
