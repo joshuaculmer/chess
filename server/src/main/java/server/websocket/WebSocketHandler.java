@@ -22,6 +22,7 @@ public class WebSocketHandler {
         UserGameCommand usercmd = new Gson().fromJson(message, UserGameCommand.class);
         switch(usercmd.getCommandType()) {
             case CONNECT -> connect(usercmd, session);
+            case LEAVE -> leave(usercmd, session);
         }
         session.getRemote().sendString("WebSocket response: " + message);
     }
@@ -35,6 +36,18 @@ public class WebSocketHandler {
         }
         catch (Exception e) {
             System.out.print(e);
+        }
+    }
+
+    private  void leave(UserGameCommand usercmd, Session session) {
+        connections.remove(usercmd.getUserName());
+        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        notification.setMessage(usercmd.getUserName() + " left the game!");
+        try {
+            connections.broadcast(usercmd.getGameID(), notification);
+        }
+        catch (Exception e) {
+            System.out.print(usercmd.getUserName() + " couldn't leave the game " + e);
         }
     }
 }

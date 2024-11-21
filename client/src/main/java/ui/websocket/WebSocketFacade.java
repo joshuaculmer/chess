@@ -50,6 +50,16 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+    public void leaveGame(String authToken, String userName, ChessGame.TeamColor color, int gameID) throws ResponseException {
+        UserGameCommand usercmd=new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+        usercmd.setUserName(userName);
+        try {
+            this.session.getBasicRemote().sendText(new Gson().toJson(usercmd, UserGameCommand.class));
+        } catch (Exception e) {
+            System.out.println("Couldn't convert websocket cmd to gson, line 83" + e.toString());
+        }
+    }
+
     public void send(String msg) throws Exception {
         this.session.getBasicRemote().sendText(msg);
     }

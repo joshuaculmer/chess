@@ -273,6 +273,12 @@ public class ChessClient {
 
     public String leave() {
         clientState = State.LOGGED_IN;
+        try {
+            wsFacade.leaveGame(authToken, userName, teamColor, gameID);
+        }
+        catch (Exception e) {
+            System.out.print("Couldn't leave game" + e);
+        }
         return "You have left the game\n";
     }
 
