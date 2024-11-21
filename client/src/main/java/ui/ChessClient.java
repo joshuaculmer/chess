@@ -288,11 +288,11 @@ public class ChessClient {
     public String renderWhite(ChessGame game) {
         String result = "\n";
         ChessBoard board = game.getBoard();
-        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
+        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "    a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
         for(int row = 7; row >=  0; row--) {
             result += renderPieces(board, row);
         }
-        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
+        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "    a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
 
         return result;
     }
@@ -300,23 +300,23 @@ public class ChessClient {
     public String renderBlack(ChessGame game) {
         String result = "\n";
         ChessBoard board = game.getBoard();
-        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
+        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "    h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
         for(int row = 0; row <8; row++) {
-            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
+            result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " ";
             for (int col=7; col >= 0; col--) {
                 result += renderPiece(board, row, col);
             }
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
             result+="\n";
         }
-        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "   h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
+        result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "    h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
 
         return result;
     }
 
     public String renderPieces(ChessBoard board, int row) {
         String result = "";
-        result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + (row + 1) + " ";
+        result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + (row + 1) + " ";
         for (int col=0; col < 8; col++) {
             result += renderPiece(board, row, col);
         }

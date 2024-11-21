@@ -72,7 +72,7 @@ public class ServerFacade extends Endpoint {
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             public void onMessage(String message) {
-                System.out.println(message);
+                System.out.println("We got this message from the Chess server!!" + message);
             }
         });
 
