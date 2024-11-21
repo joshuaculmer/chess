@@ -6,22 +6,23 @@ import dataaccess.*;
 import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
+import server.websocket.WebSocketHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
 import spark.*;
 
 public class Server {
-
-
     private UserDAO userDB = new UserDAOMemory();
     private AuthDAO authDB = new AuthDAOMemory();
     private GameDAO gameDB = new GameDAOMemory();
+    private final WebSocketHandler webSocketHandler;
     UserService userSerivceInstance = null;
     GameService gameServiceInstance = null;
 
 
     public Server() {
+        webSocketHandler = new WebSocketHandler();
         try {
             userDB=new UserDAOSQL();
         } catch (ResponseException ignored) {
@@ -49,6 +50,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 
+        Spark.webSocket("/ws", webSocketHandler);
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logOut);
@@ -56,9 +58,8 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         Spark.delete("/db", this::clearAll);
+        Spark.get("/echo/:msg", (req, res) -> "HTTP response: " + req.params(":msg"));
         Spark.exception(ResponseException.class, this::exceptionHandler);
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();

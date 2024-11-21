@@ -1,0 +1,8 @@
+Chess notes to fix bugs that you shouldn't have
+
+
+Spark.websocket("/ws" websocketHandler or whatever class you have here) needs to be before the other endpoints
+
+make sure that the server you're calling here has the @Websocket tag
+
+Make sure that when referencing session, you use the org.eclipse.jetty.websocket.api.Session implementation of session. Not the jdk one
