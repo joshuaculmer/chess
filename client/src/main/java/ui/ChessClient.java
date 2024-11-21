@@ -200,7 +200,12 @@ public class ChessClient {
             facade.joinGame(authToken, teamColor, id);
             this.teamColor = teamColor;
             clientState = State.IN_GAME;
-            return "Joined, need to render board" + renderGame(new ChessGame(), teamColor);
+            if(wsFacade == null)
+            {
+                wsFacade = new WebSocketFacade(url);
+            }
+            wsFacade.joinGame(authToken, userName, teamColor, id);
+            return "Joined Game!\n" + renderGame(new ChessGame(), teamColor);
         }
         catch (ResponseException e) {
             return e.getMessage()+ "\n";
