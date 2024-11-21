@@ -44,7 +44,7 @@ public class ChessClient {
 
     public String eval(String input) {
         var tokens = input.toLowerCase().split(" ");
-        var cmd = (tokens.length > 0) ? tokens[0] : "help";
+        var cmd = (tokens.length > 0) ? tokens[0] : "default";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (clientState) {
             case LOGGED_OUT -> switch (cmd) {
@@ -70,7 +70,8 @@ public class ChessClient {
                 case "leave" -> leave();
                 case "resign" -> resign();
                 case "help" -> helpInGame();
-                default -> "Game would render here";
+                case "highlight" -> highlight();
+                default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
         };
     }
@@ -254,15 +255,20 @@ public class ChessClient {
     }
 
     public String redraw() {
-        return "TODO: implement redraw\n";
+        return renderGame(game, teamColor);
     }
 
     public String leave() {
-        return "TODO: implement leave\n";
+        clientState = State.LOGGED_IN;
+        return "You have left the game\n";
     }
 
     public String resign() {
         return "TODO: implement resign\n";
+    }
+
+    public String highlight() {
+        return "TODO: implement highlight\n";
     }
 
     public String helpInGame() {
