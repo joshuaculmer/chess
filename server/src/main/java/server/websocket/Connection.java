@@ -9,15 +9,13 @@ public class Connection {
     public String userName;
     public String authToken;
     public int gameID;
-    public ChessGame.TeamColor color;
     public Session session;
 
-    public Connection(String username, Session session, String authToken, int gameID, ChessGame.TeamColor color) {
+    public Connection(String username, Session session, String authToken, int gameID) {
         this.userName = username;
         this.session = session;
         this.authToken = authToken;
         this.gameID = gameID;
-        this.color = color;
     }
 
     public void send(String msg) throws IOException {

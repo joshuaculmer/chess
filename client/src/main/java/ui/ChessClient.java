@@ -7,6 +7,7 @@ import chess.ChessPosition;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
+import ui.websocket.WebSocketFacade;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -23,7 +24,10 @@ public class ChessClient {
     private ChessGame game = new ChessGame();
     private ChessGame.TeamColor teamColor;
     private int gameID;
+    private String userName;
     private ArrayList<GameData> gamesList;
+    private WebSocketFacade wsFacade;
+    private final String url;
 
 
     private final String loggedOutIntro = SET_TEXT_COLOR_WHITE + "Logged Out>>>" ;
@@ -37,6 +41,7 @@ public class ChessClient {
 
     public ChessClient(String url) {
         facade = new ServerFacade(url);
+        this.url = url;
 
     }
     // this runs all the logic for the chess client
@@ -87,6 +92,7 @@ public class ChessClient {
         try {
             authToken = facade.registerUser(user).authToken();
             clientState = State.LOGGED_IN;
+            this.userName = username;
             return loggedInIntro;
         }
         catch (ResponseException e) {
@@ -223,6 +229,7 @@ public class ChessClient {
             facade.logout(authToken);
             authToken = "";
             clientState = State.LOGGED_OUT;
+            this.userName = null;
             return loggedOutIntro;
         }
         catch (ResponseException e) {
@@ -352,7 +359,11 @@ public class ChessClient {
     // Stubbed method, to remove later
     public String send(String... params) {
         try {
-            facade.send(params[0]);
+            if(wsFacade == null)
+            {
+                wsFacade = new WebSocketFacade(url);
+            }
+            wsFacade.send(params[0]);
         } catch (Exception e) {
             System.out.print(e.toString());
         }

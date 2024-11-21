@@ -20,12 +20,12 @@ public class WebSocketHandler {
         System.out.printf("Received: %s", message);
         UserGameCommand usercmd = new Gson().fromJson(message, UserGameCommand.class);
         switch(usercmd.getCommandType()) {
-            case CONNECT -> connect("test", session);
+            case CONNECT -> connect(usercmd, session);
         }
         session.getRemote().sendString("WebSocket response: " + message);
     }
 
-    private void connect(String username, Session session) {
-        System.out.print(username);
+    private void connect(UserGameCommand usercmd, Session session) {
+        System.out.print(usercmd);
     }
 }

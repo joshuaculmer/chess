@@ -6,18 +6,13 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import websocket.commands.UserGameCommand;
-
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
-import javax.websocket.*;
 
 
-public class ServerFacade extends Endpoint {
+public class ServerFacade{
     private final String serverUrl;
-    private WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-    private Session session;
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -62,47 +57,12 @@ public class ServerFacade extends Endpoint {
         JoinRequest request = new JoinRequest(color, gameID);
         makeRequest("PUT", path, request, authToken,  null);
 
-        container = ContainerProvider.getWebSocketContainer();
-        try {
-            this.session=container.connectToServer(this, new URI("ws://localhost:8080/ws"));
-        }
-        catch (Exception e) {
-            System.out.println("URL not configured properly ");
-        }
-        this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-            public void onMessage(String message) {
-                System.out.println(message);
-            }
-        });
 
-        UserGameCommand usercmd = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
-        try {
-            this.session.getBasicRemote().sendText(new Gson().toJson(usercmd, UserGameCommand.class));
-        }
-        catch (Exception e) {
-            System.out.println("Couldn't convert websocket cmd to gson, line 83" + e.toString());
-        }
     }
 
     public void clearAll(String... params) throws ResponseException{
         String path = "/db";
         makeRequest("DELETE", path, null, null, null);
-    }
-
-    public void send(String msg) throws Exception {
-        container = ContainerProvider.getWebSocketContainer();
-        this.session = container.connectToServer(this, new URI("ws://localhost:8080/ws"));
-
-        this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-            public void onMessage(String message) {
-                System.out.println("We got this message from the Chess server!!" + message);
-            }
-        });
-
-        this.session.getBasicRemote().sendText(msg);
-    }
-
-    public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
     private <T> T makeRequest(String method, String path, Object request, String header, Class<T> responseClass) throws ResponseException {

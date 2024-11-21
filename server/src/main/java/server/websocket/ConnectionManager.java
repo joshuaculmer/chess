@@ -12,7 +12,7 @@ public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
     public void add(String username, Session session, String authtoken, int gameID, ChessGame.TeamColor color) {
-        var connection = new Connection(username, session, authtoken, gameID, color);
+        var connection = new Connection(username, session, authtoken, gameID);
         connections.put(username, connection);
     }
 
