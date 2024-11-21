@@ -6,6 +6,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 
 import java.io.IOException;
@@ -26,6 +27,14 @@ public class WebSocketHandler {
     }
 
     private void connect(UserGameCommand usercmd, Session session) {
-        System.out.print(usercmd);
+        connections.add(usercmd.getUserName(), session, usercmd.getAuthToken(), usercmd.getGameID() );
+        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        notification.setMessage(usercmd.getUserName() + " joined the game!");
+        try {
+            connections.broadcast(usercmd.getGameID(), notification);
+        }
+        catch (Exception e) {
+            System.out.print(e);
+        }
     }
 }

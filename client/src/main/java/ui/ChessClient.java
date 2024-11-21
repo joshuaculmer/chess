@@ -111,6 +111,7 @@ public class ChessClient {
         try {
             authToken = facade.loginUser(user).authToken();
             clientState = State.LOGGED_IN;
+            this.userName = username;
             return loggedInIntro;
         }
         catch (ResponseException e) {
