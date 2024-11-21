@@ -6,14 +6,16 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
+import javax.websocket.*;
 
 
-public class ServerFacade {
+public class ServerFacade extends Endpoint {
     private final String serverUrl;
+    private WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+    private Session session;
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -64,6 +66,21 @@ public class ServerFacade {
         makeRequest("DELETE", path, null, null, null);
     }
 
+    public void send(String msg) throws Exception {
+        container = ContainerProvider.getWebSocketContainer();
+        this.session = container.connectToServer(this, new URI("ws://localhost:8080/ws"));
+
+        this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            public void onMessage(String message) {
+                System.out.println(message);
+            }
+        });
+
+        this.session.getBasicRemote().sendText(msg);
+    }
+
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
+    }
 
     private <T> T makeRequest(String method, String path, Object request, String header, Class<T> responseClass) throws ResponseException {
         try {

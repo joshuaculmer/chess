@@ -51,6 +51,7 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "quit" -> "quit";
+                case "send" -> send(params);
                 case "help" -> helpLoggedOut();
                 default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
@@ -312,5 +313,15 @@ public class ChessClient {
             result += "   ";
         }
         return result;
+    }
+
+    public String send(String... params) {
+        try {
+            facade.send(params[0]);
+        } catch (Exception e) {
+            System.out.print(e.toString());
+        }
+
+        return "sent message";
     }
 }
