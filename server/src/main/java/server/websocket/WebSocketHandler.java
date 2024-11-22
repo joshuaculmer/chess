@@ -1,4 +1,5 @@
 package server.websocket;
+import chess.ChessGame;
 import com.google.gson.Gson;
 
 import dataaccess.*;
@@ -9,6 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
 import service.UserService;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -42,7 +44,10 @@ public class WebSocketHandler {
         connections.add(usercmd.getUserName(), session, usercmd.getAuthToken(), usercmd.getGameID() );
         ServerMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, usercmd.getUserName() + " joined the game");
         try {
+            ChessGame game = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID()).game();
+            ServerMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
             connections.broadcast(usercmd.getGameID(), notification);
+            connections.broadcast(usercmd.getGameID(), loadGameMessage);
         }
         catch (Exception e) {
             System.out.print(e);

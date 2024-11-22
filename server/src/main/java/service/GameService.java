@@ -29,6 +29,13 @@ public class GameService {
         return (ArrayList<GameData>) gameDB.listGames();
     }
 
+    public GameData getGame(String authToken, int gameID) throws ResponseException{
+        AuthData confirmed = authDB.getAuthData(authToken);
+        if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}
+
+        return gameDB.getGameDataByID(gameID);
+    }
+
     public int createGame(String authToken, String gameName) throws  ResponseException{
         AuthData confirmed = authDB.getAuthData(authToken);
         if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}

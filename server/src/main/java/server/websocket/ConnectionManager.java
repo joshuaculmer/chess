@@ -3,6 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -28,9 +29,13 @@ public class ConnectionManager {
         for (var connection : connections.values()) {
             if (connection.session.isOpen()) {
                 if (connection.gameID == gameID) {
-                    switch (serverMessage.getServerMessageType()) {
+                    ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
+                    switch (type) {
                         case ServerMessage.ServerMessageType.NOTIFICATION -> {
                             connection.send(new Gson().toJson(serverMessage, NotificationMessage.class));
+                        }
+                        case ServerMessage.ServerMessageType.LOAD_GAME -> {
+                            connection.send(new Gson().toJson(serverMessage, LoadGameMessage.class));
                         }
                         default -> System.out.println("Connection mananager broadcasting unknown servermessage\n");
                     }
