@@ -21,7 +21,7 @@ public class ChessClient {
     private State clientState = State.LOGGED_OUT;
     private final ServerFacade facade;
     private String authToken = "";
-    private ChessGame game = new ChessGame();
+    private ChessGame game = null;
     private ChessGame.TeamColor teamColor;
     private int gameID;
     private String userName;
@@ -56,7 +56,7 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "quit" -> "quit";
-                case "send" -> send(params);
+                case "uit" -> "quit";
                 case "help" -> helpLoggedOut();
                 default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
@@ -119,7 +119,7 @@ public class ChessClient {
         }
     }
 
-    public String createGame(String... params) {
+    private String createGame(String... params) {
         String gameName = "";
         if(params.length >= 1) {
             for(int i = 0; i < params.length; i++) {
@@ -135,7 +135,7 @@ public class ChessClient {
         }
     }
 
-    public String listGames() {
+    private String listGames() {
         try {
             gamesList =  facade.listGames(authToken);
             if(gamesList.isEmpty()) {
@@ -169,7 +169,7 @@ public class ChessClient {
         }
     }
 
-    public String joinGame(String... params) {
+    private String joinGame(String... params) {
         if(params.length != 2) {
             return SET_TEXT_COLOR_RED + "Use format Join __id__ __white/black__\n";
         }
@@ -203,7 +203,7 @@ public class ChessClient {
             clientState = State.IN_GAME;
             if(wsFacade == null)
             {
-                wsFacade = new WebSocketFacade(url);
+                wsFacade = new WebSocketFacade(url, this);
             }
             wsFacade.joinGame(authToken, userName, teamColor, id);
             gameID = id;
@@ -214,7 +214,7 @@ public class ChessClient {
         }
     }
 
-    public String observeGame(String... params) {
+    private String observeGame(String... params) {
         if( params.length != 1) {
             return SET_TEXT_COLOR_RED + "Use format observe __id__\n";
         }
@@ -231,7 +231,7 @@ public class ChessClient {
         return renderGame(game, null);
     }
 
-    public String logout() {
+    private String logout() {
         try {
             facade.logout(authToken);
             authToken = "";
@@ -244,7 +244,10 @@ public class ChessClient {
         }
     }
 
-
+    public void updateGame(ChessGame game) {
+        this.game = game;
+        System.out.println((renderGame(game, teamColor)));
+    }
 
     public String helpLoggedOut() {
         return SET_TEXT_COLOR_BLUE +"register <USERNAME> <PASSWORD> <EMAIL> "+ SET_TEXT_COLOR_YELLOW + "- to create an account\n" +
@@ -378,18 +381,4 @@ public class ChessClient {
         return result;
     }
 
-    // Stubbed method, to remove later
-    public String send(String... params) {
-        try {
-            if(wsFacade == null)
-            {
-                wsFacade = new WebSocketFacade(url);
-            }
-            wsFacade.send(params[0]);
-        } catch (Exception e) {
-            System.out.print(e.toString());
-        }
-
-        return "sent message";
-    }
 }

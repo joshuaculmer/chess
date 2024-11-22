@@ -35,3 +35,6 @@ var json = serializer.toJson(game);
 
 // deserialize back to ChessGame
 game = serializer.fromJson(json, ChessGame.class);
+
+# MYSQL Notes
+mysqlsh -u root -p*password* --sql
