@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -30,8 +31,18 @@ public class WebSocketFacade extends Endpoint {
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
-                public void onMessage(String message) {
-                    System.out.println(SET_TEXT_COLOR_LIGHT_GREY + message);
+                public void onMessage(String jsonServerMessage) {
+                    ServerMessage serverMessage = new Gson().fromJson(jsonServerMessage, ServerMessage.class);
+                    ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
+
+                    switch (type) {
+                        case ServerMessage.ServerMessageType.NOTIFICATION -> {
+                            NotificationMessage notificationMessage = new Gson().fromJson(jsonServerMessage, NotificationMessage.class);
+                            String message = notificationMessage.getMessage();
+                            System.out.println(SET_TEXT_COLOR_LIGHT_GREY + message);
+                        }
+                    }
+
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

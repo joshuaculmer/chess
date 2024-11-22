@@ -9,6 +9,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
 import service.UserService;
 import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 
@@ -39,8 +40,7 @@ public class WebSocketHandler {
 
     private void connect(UserGameCommand usercmd, Session session) {
         connections.add(usercmd.getUserName(), session, usercmd.getAuthToken(), usercmd.getGameID() );
-        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        notification.setMessage(usercmd.getUserName() + " joined the game!");
+        ServerMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, usercmd.getUserName() + " joined the game");
         try {
             connections.broadcast(usercmd.getGameID(), notification);
         }
@@ -53,8 +53,7 @@ public class WebSocketHandler {
         try {
             gameService.leaveGame(usercmd.getAuthToken(), usercmd.getGameID());
             connections.remove(usercmd.getUserName());
-            ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-            notification.setMessage(usercmd.getUserName() + " left the game!");
+            ServerMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, usercmd.getUserName() + " left the game!");
             try {
                 connections.broadcast(usercmd.getGameID(), notification);
             }

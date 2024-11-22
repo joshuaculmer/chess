@@ -1,9 +1,12 @@
 package server.websocket;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
+import javax.management.Notification;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(String username, Session session, String authtoken, int gameID) {
-        var connection = new Connection(username, session, authtoken, gameID);
+    public void add(String username, Session session, String authToken, int gameID) {
+        var connection = new Connection(username, session, authToken, gameID);
         connections.put(username, connection);
     }
 
@@ -20,12 +23,17 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(int gameID, ServerMessage notification) throws IOException {
+    public void broadcast(int gameID, ServerMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var connection : connections.values()) {
             if (connection.session.isOpen()) {
                 if (connection.gameID == gameID) {
-                    connection.send(notification.getMessage());
+                    switch (serverMessage.getServerMessageType()) {
+                        case ServerMessage.ServerMessageType.NOTIFICATION -> {
+                            connection.send(new Gson().toJson(serverMessage, NotificationMessage.class));
+                        }
+                        default -> System.out.println("Connection mananager broadcasting unknown servermessage\n");
+                    }
                 }
             } else {
                 removeList.add(connection);
