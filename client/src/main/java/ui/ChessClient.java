@@ -302,7 +302,16 @@ public class ChessClient {
 
 
     public String renderGame(ChessGame game, ChessGame.TeamColor color) {
-        return renderBlack(game) + renderWhite(game);
+        if(color == null) {
+            return renderBlack(game) + renderWhite(game);
+        }
+        else if (color == ChessGame.TeamColor.WHITE) {
+            return renderWhite(game);
+        }
+        else if (color == ChessGame.TeamColor.BLACK) {
+            return renderBlack(game);
+        }
+        return null;
     }
 
     public String renderWhite(ChessGame game) {
