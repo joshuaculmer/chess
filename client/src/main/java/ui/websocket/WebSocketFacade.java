@@ -4,11 +4,15 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
+import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 
 
 public class WebSocketFacade extends Endpoint {
@@ -27,7 +31,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    System.out.print("MEssage from server: " + message);
+                    System.out.println(SET_TEXT_COLOR_LIGHT_GREY + message);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

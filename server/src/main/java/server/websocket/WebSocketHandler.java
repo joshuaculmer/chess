@@ -34,7 +34,7 @@ public class WebSocketHandler {
             case CONNECT -> connect(usercmd, session);
             case LEAVE -> leave(usercmd, session);
         }
-        session.getRemote().sendString("WebSocket response: " + message);
+//        session.getRemote().sendString("WebSocket response: " + message);
     }
 
     private void connect(UserGameCommand usercmd, Session session) {
@@ -50,21 +50,23 @@ public class WebSocketHandler {
     }
 
     private  void leave(UserGameCommand usercmd, Session session) {
-
         try {
             gameService.leaveGame(usercmd.getAuthToken(), usercmd.getGameID());
+            connections.remove(usercmd.getUserName());
+            ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+            notification.setMessage(usercmd.getUserName() + " left the game!");
+            try {
+                connections.broadcast(usercmd.getGameID(), notification);
+            }
+            catch (Exception e) {
+                System.out.print("Couldn't broadcast notification\n");
+            }
         }
         catch (Exception e) {
             System.out.println("Couldn't leave game: " + e);
         }
-        connections.remove(usercmd.getUserName());
-        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        notification.setMessage(usercmd.getUserName() + " left the game!");
-        try {
-            connections.broadcast(usercmd.getGameID(), notification);
-        }
-        catch (Exception e) {
-            System.out.print(usercmd.getUserName() + " couldn't leave the game " + e);
-        }
+
+
+
     }
 }

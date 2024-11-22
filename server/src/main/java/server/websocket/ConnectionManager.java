@@ -25,7 +25,7 @@ public class ConnectionManager {
         for (var connection : connections.values()) {
             if (connection.session.isOpen()) {
                 if (connection.gameID == gameID) {
-                    connection.send(notification.toString());
+                    connection.send(notification.getMessage());
                 }
             } else {
                 removeList.add(connection);
