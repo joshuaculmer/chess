@@ -9,6 +9,7 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GameService {
     private AuthDAO authDB;
@@ -67,6 +68,31 @@ public class GameService {
             ((GameDAOSQL) gameDB).setGameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(),
                     gameData.gameName(), gameData.game());
         }
+    }
+    public void leaveGame(String authToken, int gameID) throws ResponseException{
+        AuthData confirmed = authDB.getAuthData(authToken);
+        if(confirmed == null) { throw new ResponseException(401, "Error: unauthorized");}
+        GameData gameData = gameDB.getGameDataByID(gameID);
+        if(gameData == null) { throw new ResponseException(400, "Error: bad request");}
+        if (Objects.equals(gameData.whiteUsername(), confirmed.username())){
+            if(gameDB instanceof GameDAOMemory) {
+                gameDB.addGame(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
+            }
+            else if(gameDB instanceof GameDAOSQL) {
+                ((GameDAOSQL) gameDB).setGameData(gameData.gameID(), null, gameData.blackUsername(),
+                        gameData.gameName(), gameData.game());
+            }
+        }
+        if (Objects.equals(gameData.blackUsername(), confirmed.username())) {
+            if(gameDB instanceof GameDAOMemory) {
+                gameDB.addGame(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
+            }
+            else if(gameDB instanceof GameDAOSQL) {
+                ((GameDAOSQL) gameDB).setGameData(gameData.gameID(), gameData.whiteUsername(), null,
+                        gameData.gameName(), gameData.game());
+            }
+        }
+
     }
 
     public int nextGameID() {

@@ -206,6 +206,7 @@ public class ChessClient {
                 wsFacade = new WebSocketFacade(url);
             }
             wsFacade.joinGame(authToken, userName, teamColor, id);
+            gameID = id;
             return "Joined Game!\n" + renderGame(new ChessGame(), teamColor);
         }
         catch (ResponseException e) {

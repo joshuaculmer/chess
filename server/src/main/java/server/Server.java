@@ -22,7 +22,6 @@ public class Server {
 
 
     public Server() {
-        webSocketHandler = new WebSocketHandler();
         try {
             userDB=new UserDAOSQL();
         } catch (ResponseException ignored) {
@@ -40,6 +39,7 @@ public class Server {
         }
         userSerivceInstance = new UserService(userDB, authDB);
         gameServiceInstance = new GameService(authDB, gameDB);
+        webSocketHandler = new WebSocketHandler(userSerivceInstance, gameServiceInstance);
     }
 
 

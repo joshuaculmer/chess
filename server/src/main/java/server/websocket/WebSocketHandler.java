@@ -1,10 +1,13 @@
 package server.websocket;
 import com.google.gson.Gson;
 
+import dataaccess.*;
+import exception.ResponseException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
+import service.UserService;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -15,6 +18,13 @@ import java.io.IOException;
 public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
+    UserService userService;
+    GameService gameService;
+
+    public WebSocketHandler(UserService userService, GameService gameService) {
+        this.userService = userService;
+        this.gameService = gameService;
+    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
@@ -40,6 +50,13 @@ public class WebSocketHandler {
     }
 
     private  void leave(UserGameCommand usercmd, Session session) {
+
+        try {
+            gameService.leaveGame(usercmd.getAuthToken(), usercmd.getGameID());
+        }
+        catch (Exception e) {
+            System.out.println("Couldn't leave game: " + e);
+        }
         connections.remove(usercmd.getUserName());
         ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         notification.setMessage(usercmd.getUserName() + " left the game!");
