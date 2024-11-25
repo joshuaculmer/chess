@@ -72,4 +72,13 @@ public class ConnectionManager {
             }
         }
     }
+
+    public void sendErrorMessage(Session session, String message) {
+        try {
+            session.getRemote().sendString(message);
+        }
+        catch (Exception ignore) {
+            System.out.println("Couldn't send Error Message");
+        }
+    }
 }

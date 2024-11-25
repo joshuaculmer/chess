@@ -62,11 +62,12 @@ public class WebSocketHandler {
             connections.sendSingleMessage(userName, loadGameMessage);
         }
         catch (Exception e) {
-            System.out.print(e);
+            System.out.print("User couldn't connect" + e);
+            connections.sendErrorMessage(session, "Error: " + e.getMessage());
         }
     }
 
-    private  void leave(UserGameCommand usercmd, Session session) {
+    private void leave(UserGameCommand usercmd, Session session) {
         try {
             gameService.leaveGame(usercmd.getAuthToken(), usercmd.getGameID());
             String userName = userService.checkAuthToken(usercmd.getAuthToken());
@@ -81,6 +82,7 @@ public class WebSocketHandler {
         }
         catch (Exception e) {
             System.out.println("Couldn't leave game: " + e);
+            connections.sendErrorMessage(session, "Error: " + e.getMessage());
         }
 
 
