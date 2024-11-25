@@ -11,6 +11,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
 import service.UserService;
+import websocket.commands.ConnectUserCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -37,22 +38,16 @@ public class WebSocketHandler {
         System.out.printf("Received: %s", message);
         UserGameCommand usercmd = new Gson().fromJson(message, UserGameCommand.class);
         switch(usercmd.getCommandType()) {
-            case CONNECT -> connect(usercmd, session);
+            case CONNECT -> connect(new Gson().fromJson(message, ConnectUserCommand.class), session);
             case LEAVE -> leave(usercmd, session);
         }
     }
 
-    private void connect(UserGameCommand usercmd, Session session) {
+    private void connect(ConnectUserCommand usercmd, Session session) {
         try {
             GameData gameData = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID());
             String userName = userService.checkAuthToken(usercmd.getAuthToken());
-            ChessGame.TeamColor color = null;
-            if(Objects.equals(gameData.whiteUsername(), userName)){
-                color = ChessGame.TeamColor.WHITE;
-            }
-            if(Objects.equals(gameData.blackUsername(), userName)) {
-                color = ChessGame.TeamColor.BLACK;
-            }
+            ChessGame.TeamColor color = usercmd.getColor();
             ServerMessage notification = null;
             if(color == null) {
                 notification=new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " joined the game as " + color);
