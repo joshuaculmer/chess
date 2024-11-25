@@ -57,10 +57,10 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
-    public String checkAuthToken(String authToken) {
+    public String checkAuthToken(String authToken) throws ResponseException{
         AuthData confirmed = authDB.getAuthData(authToken);
         if(confirmed == null) {
-            return null;
+            throw new ResponseException(401, "Error: unauthorized");
         }
         else {
             return  confirmed.username();

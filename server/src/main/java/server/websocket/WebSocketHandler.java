@@ -13,6 +13,7 @@ import service.GameService;
 import service.UserService;
 import websocket.commands.ConnectUserCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -45,8 +46,11 @@ public class WebSocketHandler {
 
     private void connect(ConnectUserCommand usercmd, Session session) {
         try {
-            GameData gameData = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID());
             String userName = userService.checkAuthToken(usercmd.getAuthToken());
+            GameData gameData = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID());
+            if(gameData == null) {
+                throw new ResponseException(401, "Error: Invalid GameID");
+            }
             ChessGame.TeamColor color = usercmd.getColor();
             ServerMessage notification = null;
             if(color == null) {
@@ -62,8 +66,8 @@ public class WebSocketHandler {
             connections.sendSingleMessage(userName, loadGameMessage);
         }
         catch (Exception e) {
-            System.out.print("User couldn't connect" + e);
-            connections.sendErrorMessage(session, "Error: " + e.getMessage());
+            System.out.print("User couldn't connect" + e + "\n");
+            connections.sendErrorMessage(session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR: " + e.getMessage()));
         }
     }
 
@@ -81,8 +85,8 @@ public class WebSocketHandler {
             }
         }
         catch (Exception e) {
-            System.out.println("Couldn't leave game: " + e);
-            connections.sendErrorMessage(session, "Error: " + e.getMessage());
+            System.out.println("Couldn't leave game: " + e + "\n");
+            connections.sendErrorMessage(session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: " + e.getMessage()));
         }
 
 
