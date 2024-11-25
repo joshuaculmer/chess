@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 
 import dataaccess.*;
 import exception.ResponseException;
+import model.GameData;
+import model.UserData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -16,6 +18,7 @@ import websocket.messages.ServerMessage;
 
 
 import java.io.IOException;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -37,17 +40,31 @@ public class WebSocketHandler {
             case CONNECT -> connect(usercmd, session);
             case LEAVE -> leave(usercmd, session);
         }
-//        session.getRemote().sendString("WebSocket response: " + message);
     }
 
     private void connect(UserGameCommand usercmd, Session session) {
-        connections.add(usercmd.getUserName(), session, usercmd.getAuthToken(), usercmd.getGameID() );
-        ServerMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, usercmd.getUserName() + " joined the game");
         try {
-            ChessGame game = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID()).game();
-            ServerMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
+            GameData gameData = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID());
+            String userName = userService.checkAuthToken(usercmd.getAuthToken());
+            ChessGame.TeamColor color = null;
+            if(Objects.equals(gameData.whiteUsername(), userName)){
+                color = ChessGame.TeamColor.WHITE;
+            }
+            if(Objects.equals(gameData.blackUsername(), userName)) {
+                color = ChessGame.TeamColor.BLACK;
+            }
+            ServerMessage notification = null;
+            if(color == null) {
+                notification=new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " joined the game as " + color);
+            }
+            else {
+                notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " joined the game as observer");
+            }
             connections.broadcast(usercmd.getGameID(), notification);
-            connections.broadcast(usercmd.getGameID(), loadGameMessage);
+            connections.add(userName, session, usercmd.getAuthToken(), usercmd.getGameID() );
+            ChessGame game = gameData.game();
+            ServerMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
+            connections.sendSingleMessage(userName, loadGameMessage);
         }
         catch (Exception e) {
             System.out.print(e);
@@ -57,8 +74,9 @@ public class WebSocketHandler {
     private  void leave(UserGameCommand usercmd, Session session) {
         try {
             gameService.leaveGame(usercmd.getAuthToken(), usercmd.getGameID());
-            connections.remove(usercmd.getUserName());
-            ServerMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, usercmd.getUserName() + " left the game!");
+            String userName = userService.checkAuthToken(usercmd.getAuthToken());
+            connections.remove(userName);
+            ServerMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " left the game!");
             try {
                 connections.broadcast(usercmd.getGameID(), notification);
             }

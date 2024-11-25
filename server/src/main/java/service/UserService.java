@@ -56,4 +56,14 @@ public class UserService {
     private String makeAuthToken(UserData user) {
         return UUID.randomUUID().toString();
     }
+
+    public String checkAuthToken(String authToken) {
+        AuthData confirmed = authDB.getAuthData(authToken);
+        if(confirmed == null) {
+            return null;
+        }
+        else {
+            return  confirmed.username();
+        }
+    }
 }
