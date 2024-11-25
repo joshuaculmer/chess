@@ -50,4 +50,26 @@ public class ConnectionManager {
             connections.remove(c.userName);
         }
     }
+
+    public void sendSingleMessage(String username, ServerMessage serverMessage) throws IOException {
+        var removeList = new ArrayList<Connection>();
+        for (var connection : connections.values()) {
+            if (connection.session.isOpen()) {
+                if (connection.userName == username) {
+                    ServerMessage.ServerMessageType type=serverMessage.getServerMessageType();
+                    switch (type) {
+                        case ServerMessage.ServerMessageType.NOTIFICATION -> {
+                            connection.send(new Gson().toJson(serverMessage, NotificationMessage.class));
+                        }
+                        case ServerMessage.ServerMessageType.LOAD_GAME -> {
+                            connection.send(new Gson().toJson(serverMessage, LoadGameMessage.class));
+                        }
+                        default -> System.out.println("Connection mananager broadcasting unknown servermessage\n");
+                    }
+                }
+            } else {
+                removeList.add(connection);
+            }
+        }
+    }
 }
