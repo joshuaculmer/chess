@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
@@ -268,6 +265,37 @@ public class ChessClient {
     }
 
     public String move(String... params) {
+        try {
+            ChessMove move = null;
+            if(params.length == 2) {
+                ChessPosition start = new ChessPosition(params[0]);
+                ChessPosition end = new ChessPosition(params[1]);
+                move = new ChessMove(start, end, null);
+            }
+            if(params.length == 3) {
+                ChessPosition start = new ChessPosition(params[0]);
+                ChessPosition end = new ChessPosition(params[1]);
+                ChessPiece.PieceType promo = switch (params[2].toLowerCase()) {
+                    case("n") -> ChessPiece.PieceType.KNIGHT;
+                    case("r") -> ChessPiece.PieceType.ROOK;
+                    case("q") -> ChessPiece.PieceType.QUEEN;
+                    case("b") -> ChessPiece.PieceType.BISHOP;
+                    case("knight") -> ChessPiece.PieceType.KNIGHT;
+                    case("rook") -> ChessPiece.PieceType.ROOK;
+                    case("queen") -> ChessPiece.PieceType.QUEEN;
+                    case("bishop") -> ChessPiece.PieceType.BISHOP;
+                    default -> throw new ResponseException(402, "Unexpected value: " + params[2]);
+                };
+                move = new ChessMove(start, end, promo);
+            }
+            else {
+                return SET_TEXT_COLOR_RED + "Use format move <START> <END> <PROMO>\n";
+            }
+            wsFacade.makeMove(authToken, gameID, move);
+        }
+        catch (Exception e) {
+            return SET_TEXT_COLOR_RED + "An error occured: " + e.getMessage() + "\n";
+        }
         return "TODO: implement move\n";
     }
 
@@ -295,7 +323,7 @@ public class ChessClient {
     }
 
     public String helpInGame() {
-        return SET_TEXT_COLOR_BLUE +"Move <START> <END> "+ SET_TEXT_COLOR_YELLOW + "- a piece to another spot\n" +
+        return SET_TEXT_COLOR_BLUE +"Move <START> <END> <PROMO>"+ SET_TEXT_COLOR_YELLOW + "- a piece to another spot\n" +
                 SET_TEXT_COLOR_BLUE + "Redraw "+ SET_TEXT_COLOR_YELLOW + "- the board\n" +
                 SET_TEXT_COLOR_BLUE +"Leave "+ SET_TEXT_COLOR_YELLOW + "- the game\n" +
                 SET_TEXT_COLOR_BLUE + "Resign <ID> "+ SET_TEXT_COLOR_YELLOW + "- the game\n" +

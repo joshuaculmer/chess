@@ -1,5 +1,7 @@
 package chess;
 
+import exception.ResponseException;
+
 import java.util.Objects;
 
 /**
@@ -15,6 +17,23 @@ public class ChessPosition {
     public ChessPosition(int row, int col) {
         this.row = row;
         this.col = col;
+    }
+
+    public ChessPosition(String pos) throws ResponseException{
+        String col = pos.substring(0,1);
+        char row = pos.charAt(1);
+        this.row = switch (row) {
+            case 'a' -> 0;
+            case 'b' -> 1;
+            case 'c' -> 2;
+            case 'd' -> 3;
+            case 'e' -> 4;
+            case 'f' -> 5;
+            case 'g' -> 6;
+            case 'h' -> 7;
+            default -> throw new ResponseException(402, "Invalid coordinate entered");
+        };
+        this.col = Integer.parseInt(col);
     }
 
     /**
