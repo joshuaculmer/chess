@@ -8,9 +8,7 @@ import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
 import ui.websocket.WebSocketFacade;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 
@@ -74,7 +72,7 @@ public class ChessClient {
                 case "leave" -> leave();
                 case "resign" -> resign();
                 case "help" -> helpInGame();
-                case "highlight" -> highlight();
+                case "highlight" -> highlight(params);
                 default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
         };
@@ -227,7 +225,7 @@ public class ChessClient {
         catch (Exception e) {
             return SET_TEXT_COLOR_RED + "Error Occured\n";
         }
-        return renderGame(game, null);
+        return renderGame(game, null, null);
     }
 
     private String logout() {
@@ -245,7 +243,7 @@ public class ChessClient {
 
     public void updateGame(ChessGame game) {
         this.game = game;
-        System.out.println((renderGame(game, teamColor)));
+        System.out.println((renderGame(game, teamColor, null)));
     }
 
     public String helpLoggedOut() {
@@ -302,7 +300,7 @@ public class ChessClient {
     }
 
     public String redraw() {
-        return renderGame(game, teamColor);
+        return renderGame(game, teamColor, null);
     }
 
     public String leave() {
@@ -330,8 +328,17 @@ public class ChessClient {
         return "\n";
     }
 
-    public String highlight() {
-        return "TODO: implement highlight\n";
+    public String highlight(String... params) {
+        ChessPosition pos;
+        try {
+            pos = new ChessPosition(params[0]);
+        }
+        catch (Exception e) {
+            return "Please enter a valid chess coordinate\n";
+        }
+        Collection<ChessMove> moves = game.validMoves(pos);
+        moves.add(new ChessMove(pos, pos, null));
+        return renderGame(game, teamColor, new HashSet<>(moves));
     }
 
     public String helpInGame() {
@@ -339,44 +346,57 @@ public class ChessClient {
                 SET_TEXT_COLOR_BLUE + "Redraw "+ SET_TEXT_COLOR_YELLOW + "- the board\n" +
                 SET_TEXT_COLOR_BLUE +"Leave "+ SET_TEXT_COLOR_YELLOW + "- the game\n" +
                 SET_TEXT_COLOR_BLUE + "Resign <ID> "+ SET_TEXT_COLOR_YELLOW + "- the game\n" +
+                SET_TEXT_COLOR_BLUE + "Highlight <POSITION> "+ SET_TEXT_COLOR_YELLOW + "- a piece to view valid moves for that piece\n" +
                 SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n" +
                 loggedInIntro;
     }
 
 
-    public String renderGame(ChessGame game, ChessGame.TeamColor color) {
+    public String renderGame(ChessGame game, ChessGame.TeamColor color, Set<ChessMove> highlightedMoves) {
+        Set<ChessPosition> endPosSet=new HashSet<>(Collections.emptySet());
+        if(highlightedMoves != null) {
+            for (ChessMove move : highlightedMoves) {
+                endPosSet.add(move.getEndPosition());
+            }
+        }
+        
         if(color == null) {
-            return renderBlack(game) + renderWhite(game);
+            return renderBlack(game, endPosSet) + renderWhite(game, endPosSet);
         }
         else if (color == ChessGame.TeamColor.WHITE) {
-            return renderWhite(game);
+            return renderWhite(game, endPosSet);
         }
         else if (color == ChessGame.TeamColor.BLACK) {
-            return renderBlack(game);
+            return renderBlack(game, endPosSet);
         }
         return null;
     }
 
-    public String renderWhite(ChessGame game) {
+    public String renderWhite(ChessGame game, Set<ChessPosition> endPosSet) {
         String result = "\n";
         ChessBoard board = game.getBoard();
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "    a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
         for(int row = 7; row >=  0; row--) {
-            result += renderPieces(board, row);
+            result += renderPieces(board, row, endPosSet);
         }
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "    a  b  c  d  e  f  g  h    " +  SET_BG_COLOR_DARK_GREY + "\n";
 
         return result;
     }
 
-    public String renderBlack(ChessGame game) {
+    public String renderBlack(ChessGame game, Set<ChessPosition> endPosSet) {
         String result = "\n";
         ChessBoard board = game.getBoard();
         result += SET_BG_COLOR_LIGHT_GREY +SET_TEXT_COLOR_BLACK + "    h  g  f  e  d  c  b  a    " +  SET_BG_COLOR_DARK_GREY + "\n";
         for(int row = 0; row <8; row++) {
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " ";
             for (int col=7; col >= 0; col--) {
-                result += renderPiece(board, row, col);
+                if(endPosSet.contains(new ChessPosition(row, col) )) {
+                    result+=renderPiece(board, row, col, true);
+                }
+                else {
+                    result+=renderPiece(board, row, col, false);
+                }
             }
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
             result+="\n";
@@ -386,25 +406,40 @@ public class ChessClient {
         return result;
     }
 
-    public String renderPieces(ChessBoard board, int row) {
+    public String renderPieces(ChessBoard board, int row, Set<ChessPosition> endPosSet) {
         String result = "";
         result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + (row + 1) + " ";
         for (int col=0; col < 8; col++) {
-            result += renderPiece(board, row, col);
+            if(endPosSet.contains(new ChessPosition(row+1, col+1) )) {
+                result+=renderPiece(board, row, col, true);
+            }
+            else {
+                result+=renderPiece(board, row, col, false);
+            }
         }
         result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
         result+="\n";
         return result;
     }
 
-    public String renderPiece(ChessBoard board, int row, int col) {
+    public String renderPiece(ChessBoard board, int row, int col, boolean highlight) {
         String result = "";
         ChessPiece piece = board.getPiece(new ChessPosition(row+1, col+1));
         if((col + row) % 2 == 0) {
-            result += SET_BG_COLOR_BLACK;
+            if(!highlight) {
+                result+=SET_BG_COLOR_BLACK;
+            }
+            else {
+                result+=SET_BG_COLOR_DARK_GREEN;
+            }
         }
         else {
-            result += SET_BG_COLOR_DARK_GREY;
+            if(!highlight) {
+                result+=SET_BG_COLOR_DARK_GREY;
+            }
+            else {
+                result+=SET_BG_COLOR_GREEN;
+            }
         }
         if(piece != null) {
             if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
