@@ -102,6 +102,15 @@ public class WebSocketHandler {
                 throw new ResponseException(401, "Error: Invalid GameID");
             }
             ChessGame game = gameData.game();
+            ChessGame.TeamColor turn = game.getTeamTurn();
+
+            if((turn == ChessGame.TeamColor.WHITE &&  ! Objects.equals(gameData.whiteUsername(), userName))) {
+                throw new ResponseException(402, "Error: Out of turn");
+            }
+            if((turn == ChessGame.TeamColor.BLACK && ! Objects.equals(gameData.blackUsername(), userName))) {
+                throw new ResponseException(402, "Error: Out of turn");
+            }
+
             ChessMove move = usercmd.getMove();
             Collection<ChessMove> moves = game.validMoves(move.getStartPosition());
             if(!moves.contains(move)) {
