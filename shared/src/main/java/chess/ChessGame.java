@@ -16,6 +16,7 @@ public class ChessGame {
     private ChessBoard board;
     private ArrayList<ChessMove> moves;
     private TeamColor teamTurn;
+    private boolean isGameOver = false;
 
 
     public ChessGame() {
@@ -60,7 +61,7 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
         ChessPiece piece = board.getPiece(startPosition);
-        if(piece != null) {
+        if(piece != null && !isGameOver) {
             Collection<ChessMove> movesList = new ArrayList<ChessMove>();
             movesList = piece.pieceMoves(board, startPosition);
             for(int i = 0; i < movesList.size(); i++){
@@ -265,5 +266,9 @@ public class ChessGame {
         result=31 * result + (moves != null ? moves.hashCode() : 0);
         result=31 * result + (teamTurn != null ? teamTurn.hashCode() : 0);
         return result;
+    }
+
+    public void gameOver() {
+        this.isGameOver = true;
     }
 }

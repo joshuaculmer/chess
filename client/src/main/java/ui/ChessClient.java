@@ -4,11 +4,13 @@ import chess.*;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
+import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
 import ui.websocket.WebSocketFacade;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
@@ -296,7 +298,7 @@ public class ChessClient {
         catch (Exception e) {
             return SET_TEXT_COLOR_RED + "An error occured: " + e.getMessage() + "\n";
         }
-        return "TODO: implement move\n";
+        return "\n";
     }
 
     public String redraw() {
@@ -315,7 +317,17 @@ public class ChessClient {
     }
 
     public String resign() {
-        return "TODO: implement resign\n";
+
+        System.out.println("Are you sure you want to resign? You will lose D:");
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+
+        String line = scanner.nextLine();
+        if(line.equals("yes") || line.equals("y")) {
+
+        }
+
+        return "\n";
     }
 
     public String highlight() {

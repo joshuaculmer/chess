@@ -45,6 +45,7 @@ public class WebSocketHandler {
             case CONNECT -> connect(new Gson().fromJson(message, ConnectUserCommand.class), session);
             case LEAVE -> leave(usercmd, session);
             case MAKE_MOVE -> makeMove(new Gson().fromJson(message, MakeMoveCommand.class), session);
+            case RESIGN -> resign(usercmd, session);
         }
     }
 
@@ -127,6 +128,24 @@ public class WebSocketHandler {
         catch (Exception e) {
             System.out.println("Couldn't make move: " + e + "\n");
             connections.sendErrorMessage(session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: " + e.getMessage()));
+        }
+    }
+
+    private void resign(UserGameCommand usercmd, Session session) {
+        try {
+            String userName=userService.checkAuthToken(usercmd.getAuthToken());
+            GameData gameData=gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID());
+            if (gameData == null) {
+                throw new ResponseException(401, "Error: Invalid GameID");
+            }
+            ChessGame game = gameData.game();
+            game.gameOver();
+            gameService.updateGame(gameData.gameID(), game);
+            connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " has resigned\n"));
+
+        }
+        catch ( Exception e) {
+
         }
     }
 }
