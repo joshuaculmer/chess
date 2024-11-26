@@ -1,6 +1,8 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.GameDAOMemory;
@@ -98,6 +100,17 @@ public class GameService {
                 ((GameDAOSQL) gameDB).setGameData(gameData.gameID(), gameData.whiteUsername(), null,
                         gameData.gameName(), gameData.game());
             }
+        }
+    }
+
+    public void updateGame(int gameID, ChessGame game) throws ResponseException {
+        GameData gameData = gameDB.getGameDataByID(gameID);
+        if(gameData == null) { throw new ResponseException(400, "Error: Invalid gameID");}
+        if(gameDB instanceof GameDAOMemory) {
+            gameDB.addGame(gameID,gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+        }
+        else if(gameDB instanceof GameDAOSQL) {
+            ((GameDAOSQL)gameDB).setGameData(gameID,gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
         }
 
     }

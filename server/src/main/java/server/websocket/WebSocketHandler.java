@@ -1,5 +1,6 @@
 package server.websocket;
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 
 import dataaccess.*;
@@ -12,6 +13,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
 import service.UserService;
 import websocket.commands.ConnectUserCommand;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -20,6 +22,7 @@ import websocket.messages.ServerMessage;
 
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 
 @WebSocket
@@ -41,6 +44,7 @@ public class WebSocketHandler {
         switch(usercmd.getCommandType()) {
             case CONNECT -> connect(new Gson().fromJson(message, ConnectUserCommand.class), session);
             case LEAVE -> leave(usercmd, session);
+            case MAKE_MOVE -> makeMove(new Gson().fromJson(message, MakeMoveCommand.class), session);
         }
     }
 
@@ -88,8 +92,32 @@ public class WebSocketHandler {
             System.out.println("Couldn't leave game: " + e + "\n");
             connections.sendErrorMessage(session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: " + e.getMessage()));
         }
+    }
 
+    private void makeMove(MakeMoveCommand usercmd, Session session) {
+        try {
+            String userName = userService.checkAuthToken(usercmd.getAuthToken());
+            GameData gameData = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID());
+            if(gameData == null) {
+                throw new ResponseException(401, "Error: Invalid GameID");
+            }
+            ChessGame game = gameData.game();
+            ChessMove move = usercmd.getMove();
+            Collection<ChessMove> moves = game.validMoves(move.getStartPosition());
+            if(!moves.contains(move)) {
+                throw new ResponseException(402, "Error: Invalid move");
+            }
+            else {
+                game.makeMove(move);
+                gameService.updateGame(gameData.gameID(), game);
+                connections.broadcast(gameData.gameID(), new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
+                connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " has made a move\n"));
+            }
 
-
+        }
+        catch (Exception e) {
+            System.out.println("Couldn't make move: " + e + "\n");
+            connections.sendErrorMessage(session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: " + e.getMessage()));
+        }
     }
 }
