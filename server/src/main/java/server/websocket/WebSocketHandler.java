@@ -138,6 +138,13 @@ public class WebSocketHandler {
             if (gameData == null) {
                 throw new ResponseException(401, "Error: Invalid GameID");
             }
+            if(!(gameData.whiteUsername().equals(userName)|| (gameData.blackUsername().equals(userName)))){
+                throw new ResponseException(402, "Error: Invalid resign, "+ userName + " is not a player in this game");
+            }
+            if(gameData.game().isOver()) {
+                throw new ResponseException(401, "Error: Game is already over");
+            }
+
             ChessGame game = gameData.game();
             game.gameOver();
             gameService.updateGame(gameData.gameID(), game);
@@ -145,7 +152,8 @@ public class WebSocketHandler {
 
         }
         catch ( Exception e) {
-
+            System.out.println("Couldn't make move: " + e + "\n");
+            connections.sendErrorMessage(session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: " + e.getMessage()));
         }
     }
 }

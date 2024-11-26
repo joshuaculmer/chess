@@ -271,4 +271,8 @@ public class ChessGame {
     public void gameOver() {
         this.isGameOver = true;
     }
+
+    public boolean isOver() {
+        return isGameOver;
+    }
 }
