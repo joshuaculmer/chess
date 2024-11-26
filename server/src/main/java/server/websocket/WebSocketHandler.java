@@ -21,6 +21,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 
+import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
@@ -122,6 +123,22 @@ public class WebSocketHandler {
                 gameService.updateGame(gameData.gameID(), game);
                 connections.broadcast(gameData.gameID(), new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
                 connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " has made a move\n"), userName);
+                String whiteUserName = gameData.whiteUsername();
+                String blackUserName = gameData.blackUsername();
+                if(game.isInCheck(ChessGame.TeamColor.WHITE)) {
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, whiteUserName + " is in check\n"), userName);
+                }
+                else if(game.isInCheck(ChessGame.TeamColor.BLACK)) {
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, blackUserName + " is in check\n"), userName);
+                }
+                else if(game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            "Checkmate! " + blackUserName + " has won the game. Better luck next time, " + whiteUserName + "\n"), userName);
+                }
+                else if(game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            "Checkmate! " + whiteUserName + " has won the game. Better luck next time, " + blackUserName + "\n"), userName);
+                }
             }
 
         }

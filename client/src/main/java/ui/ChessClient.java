@@ -391,7 +391,7 @@ public class ChessClient {
         for(int row = 0; row <8; row++) {
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " ";
             for (int col=7; col >= 0; col--) {
-                if(endPosSet.contains(new ChessPosition(row, col) )) {
+                if(endPosSet.contains(new ChessPosition(row+1, col+1) )) {
                     result+=renderPiece(board, row, col, true);
                 }
                 else {
