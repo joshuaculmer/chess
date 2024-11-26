@@ -1,10 +1,13 @@
 package ui.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import ui.ChessClient;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -14,8 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLACK;
-import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
+import static ui.EscapeSequences.*;
 
 
 public class WebSocketFacade extends Endpoint {
@@ -48,7 +50,10 @@ public class WebSocketFacade extends Endpoint {
                             LoadGameMessage loadGameMessage = new Gson().fromJson(jsonServerMessage, LoadGameMessage.class);
                             ChessGame game = loadGameMessage.getGame();
                             client.updateGame(game);
-//                            System.out.println(SET_TEXT_COLOR_LIGHT_GREY + game.getBoard());
+                        }
+                        case ServerMessage.ServerMessageType.ERROR -> {
+                            ErrorMessage errorMessage = new Gson().fromJson(jsonServerMessage, ErrorMessage.class);
+                            System.out.println(SET_TEXT_COLOR_RED + errorMessage.getMessage());
                         }
                     }
 
@@ -83,6 +88,15 @@ public class WebSocketFacade extends Endpoint {
             this.session.getBasicRemote().sendText(new Gson().toJson(usercmd, UserGameCommand.class));
         } catch (Exception e) {
             System.out.println("Couldn't convert websocket cmd to gson, line 83" + e.toString());
+        }
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) throws ResponseException {
+        MakeMoveCommand usercmd = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE,authToken, gameID, move);
+        try {
+            this.session.getBasicRemote().sendText(new Gson().toJson(usercmd, MakeMoveCommand.class));
+        } catch (Exception e) {
+            System.out.println("Couldn't convert websocket cmd to gson, line 94" + e.toString());
         }
     }
 

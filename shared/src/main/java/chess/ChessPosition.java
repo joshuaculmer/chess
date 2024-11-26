@@ -20,20 +20,20 @@ public class ChessPosition {
     }
 
     public ChessPosition(String pos) throws ResponseException{
-        String col = pos.substring(0,1);
-        char row = pos.charAt(1);
-        this.row = switch (row) {
-            case 'a' -> 0;
-            case 'b' -> 1;
-            case 'c' -> 2;
-            case 'd' -> 3;
-            case 'e' -> 4;
-            case 'f' -> 5;
-            case 'g' -> 6;
-            case 'h' -> 7;
+        char col = pos.charAt(0);
+        String row = pos.substring(1);
+        this.col = switch (col) {
+            case 'a' -> 1;
+            case 'b' -> 2;
+            case 'c' -> 3;
+            case 'd' -> 4;
+            case 'e' -> 5;
+            case 'f' -> 6;
+            case 'g' -> 7;
+            case 'h' -> 8;
             default -> throw new ResponseException(402, "Invalid coordinate entered");
         };
-        this.col = Integer.parseInt(col);
+        this.row = Integer.parseInt(row);
     }
 
     /**

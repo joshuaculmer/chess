@@ -272,7 +272,7 @@ public class ChessClient {
                 ChessPosition end = new ChessPosition(params[1]);
                 move = new ChessMove(start, end, null);
             }
-            if(params.length == 3) {
+            else if(params.length == 3) {
                 ChessPosition start = new ChessPosition(params[0]);
                 ChessPosition end = new ChessPosition(params[1]);
                 ChessPiece.PieceType promo = switch (params[2].toLowerCase()) {
