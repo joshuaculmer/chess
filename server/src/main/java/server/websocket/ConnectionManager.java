@@ -11,6 +11,7 @@ import websocket.messages.ServerMessage;
 import javax.management.Notification;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -30,25 +31,45 @@ public class ConnectionManager {
         for (var connection : connections.values()) {
             if (connection.session.isOpen()) {
                 if (connection.gameID == gameID) {
-                    ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
-                    switch (type) {
-                        case ServerMessage.ServerMessageType.NOTIFICATION -> {
-                            connection.send(new Gson().toJson(serverMessage, NotificationMessage.class));
-                        }
-                        case ServerMessage.ServerMessageType.LOAD_GAME -> {
-                            connection.send(new Gson().toJson(serverMessage, LoadGameMessage.class));
-                        }
-                        default -> System.out.println("Connection mananager broadcasting unknown servermessage\n");
-                    }
+                    sendServerMessage(serverMessage, connection);
                 }
             } else {
                 removeList.add(connection);
             }
         }
-
         // Clean up any connections that were left open.
         for (var c : removeList) {
             connections.remove(c.userName);
+        }
+    }
+
+    public void broadcast(int gameID, ServerMessage serverMessage, String excludedUsername) throws IOException {
+        var removeList = new ArrayList<Connection>();
+        for (var connection : connections.values()) {
+            if (connection.session.isOpen()) {
+                if (connection.gameID == gameID && !Objects.equals(connection.userName, excludedUsername)) {
+                    sendServerMessage(serverMessage, connection);
+                }
+            } else {
+                removeList.add(connection);
+            }
+        }
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.userName);
+        }
+    }
+
+    private void sendServerMessage(ServerMessage serverMessage, Connection connection) throws IOException {
+        ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
+        switch (type) {
+            case ServerMessage.ServerMessageType.NOTIFICATION -> {
+                connection.send(new Gson().toJson(serverMessage, NotificationMessage.class));
+            }
+            case ServerMessage.ServerMessageType.LOAD_GAME -> {
+                connection.send(new Gson().toJson(serverMessage, LoadGameMessage.class));
+            }
+            default -> System.out.println("Connection mananager broadcasting unknown servermessage\n");
         }
     }
 
@@ -57,16 +78,7 @@ public class ConnectionManager {
         for (var connection : connections.values()) {
             if (connection.session.isOpen()) {
                 if (connection.userName == username) {
-                    ServerMessage.ServerMessageType type=serverMessage.getServerMessageType();
-                    switch (type) {
-                        case ServerMessage.ServerMessageType.NOTIFICATION -> {
-                            connection.send(new Gson().toJson(serverMessage, NotificationMessage.class));
-                        }
-                        case ServerMessage.ServerMessageType.LOAD_GAME -> {
-                            connection.send(new Gson().toJson(serverMessage, LoadGameMessage.class));
-                        }
-                        default -> System.out.println("Connection mananager broadcasting unknown servermessage\n");
-                    }
+                    sendServerMessage(serverMessage, connection);
                 }
             } else {
                 removeList.add(connection);

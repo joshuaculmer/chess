@@ -111,7 +111,7 @@ public class WebSocketHandler {
                 game.makeMove(move);
                 gameService.updateGame(gameData.gameID(), game);
                 connections.broadcast(gameData.gameID(), new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
-                connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " has made a move\n"));
+                connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " has made a move\n"), userName);
             }
 
         }
