@@ -139,7 +139,8 @@ public class WebSocketHandler {
                 }
                 else {
                     connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            userName + " has made a move\n"), userName);
+                            userName + " moved " + game.getBoard().getPiece(move.getEndPosition()).getPieceType() +
+                                    " " + move.toString() + "\n"), userName);
                 }
                 connections.broadcast(gameData.gameID(), new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
             }
@@ -173,7 +174,7 @@ public class WebSocketHandler {
 
         }
         catch ( Exception e) {
-            System.out.println("Couldn't make move: " + e + "\n");
+            System.out.println("Couldn't resign: " + e + "\n");
             connections.sendErrorMessage(session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: " + e.getMessage()));
         }
     }
