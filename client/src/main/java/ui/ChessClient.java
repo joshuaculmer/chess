@@ -234,7 +234,7 @@ public class ChessClient {
                 wsFacade = new WebSocketFacade(url, this);
             }
             wsFacade.joinGame(authToken, userName, null, id);
-            clientState = State.IN_GAME;
+            clientState = State.OBSERVER;
         }
         catch (Exception e) {
             return SET_TEXT_COLOR_RED + "Error Occured\n";

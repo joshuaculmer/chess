@@ -5,6 +5,7 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import ui.ChessClient;
+import websocket.commands.ConnectUserCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
@@ -14,6 +15,7 @@ import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -72,9 +74,9 @@ public class WebSocketFacade extends Endpoint {
 
     public void joinGame(String authToken, String userName, ChessGame.TeamColor color, int gameID) throws ResponseException {
 
-        UserGameCommand usercmd=new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        ConnectUserCommand usercmd=new ConnectUserCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID, color);
         try {
-            this.session.getBasicRemote().sendText(new Gson().toJson(usercmd, UserGameCommand.class));
+            this.session.getBasicRemote().sendText(new Gson().toJson(usercmd, ConnectUserCommand.class));
         } catch (Exception e) {
             System.out.println("Couldn't convert websocket cmd to gson, line 83" + e.toString());
         }

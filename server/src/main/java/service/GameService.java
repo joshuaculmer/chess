@@ -68,7 +68,7 @@ public class GameService {
                 gameData = new GameData(gameID, gameData.whiteUsername(), confirmed.username(),
                         gameData.gameName(), gameData.game());
             }
-            default -> throw new ResponseException(400, "Error: bad request");
+            default -> System.out.println("An observer named" + confirmed.username() + " has joined\n");
         }
         if(gameDB instanceof GameDAOMemory) {
             gameDB.addGame(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());

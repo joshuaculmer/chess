@@ -53,11 +53,11 @@ public class WebSocketHandler {
             }
             ChessGame.TeamColor color = usercmd.getColor();
             ServerMessage notification = null;
-            if(color != null) {
-                notification=new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " joined the game as " + color);
+            if(color == null) {
+                notification=new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " joined the game as observer");
             }
             else {
-                notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " joined the game as observer");
+                notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " joined the game as " + color);
             }
             connections.broadcast(usercmd.getGameID(), notification);
             connections.add(userName, session, usercmd.getAuthToken(), usercmd.getGameID() );
@@ -73,7 +73,6 @@ public class WebSocketHandler {
 
     private void leave(UserGameCommand usercmd, Session session) {
         try {
-            gameService.leaveGame(usercmd.getAuthToken(), usercmd.getGameID());
             String userName = userService.checkAuthToken(usercmd.getAuthToken());
             connections.remove(userName);
             ServerMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " left the game!");
@@ -82,6 +81,10 @@ public class WebSocketHandler {
             }
             catch (Exception e) {
                 System.out.print("Couldn't broadcast notification\n");
+            }
+            GameData game = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID());
+            if (game.whiteUsername() == userName || game.blackUsername() == userName ) {
+                gameService.leaveGame(usercmd.getAuthToken(), usercmd.getGameID());
             }
         }
         catch (Exception e) {
