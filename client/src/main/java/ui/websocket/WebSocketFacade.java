@@ -105,4 +105,13 @@ public class WebSocketFacade extends Endpoint {
     public void send(String msg) throws Exception {
         this.session.getBasicRemote().sendText(msg);
     }
+
+    public void resign(String authToken, int gameID) {
+        UserGameCommand usercmd=new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        try {
+            this.session.getBasicRemote().sendText(new Gson().toJson(usercmd, UserGameCommand.class));
+        } catch (Exception e) {
+            System.out.println("Couldn't convert websocket cmd to gson, line 83" + e.toString());
+        }
+    }
 }

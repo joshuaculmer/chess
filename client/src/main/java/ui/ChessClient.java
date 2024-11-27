@@ -235,6 +235,7 @@ public class ChessClient {
             }
             wsFacade.joinGame(authToken, userName, null, id);
             clientState = State.OBSERVER;
+            gameID = id;
         }
         catch (Exception e) {
             return SET_TEXT_COLOR_RED + "Error Occured\n";
@@ -280,6 +281,9 @@ public class ChessClient {
 
     public String move(String... params) {
         try {
+            if(game.isOver()) {
+                throw new ResponseException(401, "Error: Game is already over");
+            }
             ChessMove move = null;
             if(params.length == 2) {
                 ChessPosition start = new ChessPosition(params[0]);
@@ -332,11 +336,9 @@ public class ChessClient {
 
         System.out.println("Are you sure you want to resign? You will lose D:");
         Scanner scanner = new Scanner(System.in);
-        var result = "";
-
         String line = scanner.nextLine();
-        if(line.equals("yes") || line.equals("y")) {
-
+        if(line.equals("yes") || line.equals("y") || line.equals("yup")) {
+            wsFacade.resign(authToken, gameID);
         }
 
         return "\n";

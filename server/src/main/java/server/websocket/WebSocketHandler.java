@@ -83,7 +83,7 @@ public class WebSocketHandler {
                 System.out.print("Couldn't broadcast notification\n");
             }
             GameData game = gameService.getGame(usercmd.getAuthToken(), usercmd.getGameID());
-            if (game.whiteUsername() == userName || game.blackUsername() == userName ) {
+            if (game != null) {
                 gameService.leaveGame(usercmd.getAuthToken(), usercmd.getGameID());
             }
         }
