@@ -378,6 +378,14 @@ public class ChessClient {
 
     public String renderGame(ChessGame game, ChessGame.TeamColor color, Set<ChessMove> highlightedMoves) {
         Set<ChessPosition> endPosSet=new HashSet<>(Collections.emptySet());
+        String result = "";
+        if(game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            result += SET_BG_COLOR_BLACK +SET_TEXT_COLOR_WHITE +  " Game is over! " + SET_TEXT_COLOR_RED +"Black" + SET_TEXT_COLOR_WHITE + " has won! " + SET_BG_COLOR_DARK_GREY;
+        }
+        else if(game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            result += SET_BG_COLOR_BLACK +SET_TEXT_COLOR_WHITE +  " Game is over! " + SET_TEXT_COLOR_BLUE +"White" + SET_TEXT_COLOR_WHITE + " has won! " + SET_BG_COLOR_DARK_GREY;
+        }
+
         if(highlightedMoves != null) {
             for (ChessMove move : highlightedMoves) {
                 endPosSet.add(move.getEndPosition());
@@ -385,15 +393,15 @@ public class ChessClient {
         }
         
         if(color == null) {
-            return renderWhite(game, endPosSet);
+            result += renderWhite(game, endPosSet);
         }
         else if (color == ChessGame.TeamColor.WHITE) {
-            return renderWhite(game, endPosSet);
+            result += renderWhite(game, endPosSet);
         }
         else if (color == ChessGame.TeamColor.BLACK) {
-            return renderBlack(game, endPosSet);
+            result += renderBlack(game, endPosSet);
         }
-        return null;
+        return result;
     }
 
     public String renderWhite(ChessGame game, Set<ChessPosition> endPosSet) {

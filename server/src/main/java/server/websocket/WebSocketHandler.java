@@ -34,7 +34,7 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
-        System.out.printf("Received: %s", message);
+        System.out.printf("Received: %s\n", message);
         UserGameCommand usercmd = new Gson().fromJson(message, UserGameCommand.class);
         switch(usercmd.getCommandType()) {
             case CONNECT -> connect(new Gson().fromJson(message, ConnectUserCommand.class), session);
@@ -104,10 +104,10 @@ public class WebSocketHandler {
             ChessGame.TeamColor turn = game.getTeamTurn();
 
             if((turn == ChessGame.TeamColor.WHITE &&  ! Objects.equals(gameData.whiteUsername(), userName))) {
-                throw new ResponseException(402, "Error: Out of turn");
+                throw new ResponseException(402, "Error: It is white's turn");
             }
             if((turn == ChessGame.TeamColor.BLACK && ! Objects.equals(gameData.blackUsername(), userName))) {
-                throw new ResponseException(402, "Error: Out of turn");
+                throw new ResponseException(402, "Error: It is black's turn");
             }
 
             ChessMove move = usercmd.getMove();
@@ -118,20 +118,10 @@ public class WebSocketHandler {
             else {
                 game.makeMove(move);
                 gameService.updateGame(gameData.gameID(), game);
-                connections.broadcast(gameData.gameID(), new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
-                connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        userName + " has made a move\n"), userName);
                 String whiteUserName = gameData.whiteUsername();
                 String blackUserName = gameData.blackUsername();
-                if(game.isInCheck(ChessGame.TeamColor.WHITE)) {
-                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            whiteUserName + " is in check\n"), userName);
-                }
-                else if(game.isInCheck(ChessGame.TeamColor.BLACK)) {
-                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            blackUserName + " is in check\n"), userName);
-                }
-                else if(game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+
+                if(game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                     connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                             "Checkmate! " + blackUserName + " has won the game. Better luck next time, " + whiteUserName + "\n"), userName);
                 }
@@ -139,6 +129,19 @@ public class WebSocketHandler {
                     connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                             "Checkmate! " + whiteUserName + " has won the game. Better luck next time, " + blackUserName + "\n"), userName);
                 }
+                else if(game.isInCheck(ChessGame.TeamColor.WHITE)) {
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            whiteUserName + " is in check\n"), userName);
+                }
+                else if(game.isInCheck(ChessGame.TeamColor.BLACK)) {
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            blackUserName + " is in check\n"), userName);
+                }
+                else {
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            userName + " has made a move\n"), userName);
+                }
+                connections.broadcast(gameData.gameID(), new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
             }
 
         }
