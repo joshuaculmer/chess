@@ -1,14 +1,10 @@
 package server.websocket;
-
-import chess.ChessGame;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-
-import javax.management.Notification;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;

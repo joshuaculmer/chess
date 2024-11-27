@@ -2,11 +2,8 @@ package server.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
-
-import dataaccess.*;
 import exception.ResponseException;
 import model.GameData;
-import model.UserData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -19,9 +16,6 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-
-
-import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
