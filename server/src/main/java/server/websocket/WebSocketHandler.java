@@ -112,7 +112,7 @@ public class WebSocketHandler {
 
             ChessMove move = usercmd.getMove();
             Collection<ChessMove> moves = game.validMoves(move.getStartPosition());
-            if(!moves.contains(move)) {
+            if(moves == null || moves.isEmpty() || !moves.contains(move)) {
                 throw new ResponseException(402, "Error: Invalid move");
             }
             else {
@@ -120,27 +120,25 @@ public class WebSocketHandler {
                 gameService.updateGame(gameData.gameID(), game);
                 String whiteUserName = gameData.whiteUsername();
                 String blackUserName = gameData.blackUsername();
+                connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        userName + " moved " + game.getBoard().getPiece(move.getEndPosition()).getPieceType() +
+                                " " + move.toString() + "\n"), userName);
 
                 if(game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                     connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            "Checkmate! " + blackUserName + " has won the game. Better luck next time, " + whiteUserName + "\n"), userName);
+                            "Checkmate! " + blackUserName + " has won the game. Better luck next time, " + whiteUserName + "\n"));
                 }
                 else if(game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
                     connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            "Checkmate! " + whiteUserName + " has won the game. Better luck next time, " + blackUserName + "\n"), userName);
+                            "Checkmate! " + whiteUserName + " has won the game. Better luck next time, " + blackUserName + "\n"));
                 }
                 else if(game.isInCheck(ChessGame.TeamColor.WHITE)) {
                     connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            whiteUserName + " is in check\n"), userName);
+                            whiteUserName + " is in check\n"));
                 }
                 else if(game.isInCheck(ChessGame.TeamColor.BLACK)) {
                     connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            blackUserName + " is in check\n"), userName);
-                }
-                else {
-                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            userName + " moved " + game.getBoard().getPiece(move.getEndPosition()).getPieceType() +
-                                    " " + move.toString() + "\n"), userName);
+                            blackUserName + " is in check\n"));
                 }
                 connections.broadcast(gameData.gameID(), new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
             }
