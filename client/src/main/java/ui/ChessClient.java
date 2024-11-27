@@ -30,7 +30,8 @@ public class ChessClient {
     enum State {
         LOGGED_OUT,
         LOGGED_IN,
-        IN_GAME
+        IN_GAME,
+        OBSERVER
     }
 
     public ChessClient(String url) {
@@ -70,6 +71,13 @@ public class ChessClient {
                 case "resign" -> resign();
                 case "help" -> helpInGame();
                 case "highlight" -> highlight(params);
+                default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
+            };
+            case OBSERVER -> switch (cmd) {
+                case "redraw" -> redraw();
+                case "highlight" -> highlight(params);
+                case "leave" -> leave();
+                case "help" -> helpObserver();
                 default -> SET_TEXT_COLOR_RED + "Please enter a valid command, type help to view commands\n";
             };
         };
@@ -218,11 +226,20 @@ public class ChessClient {
             if(id>gamesList.size() || id <= 0) {
                 return SET_TEXT_COLOR_RED + "Please enter a valid id\n";
             }
+            else {
+                id = gamesList.get(id-1).gameID();
+            }
+            if(wsFacade == null)
+            {
+                wsFacade = new WebSocketFacade(url, this);
+            }
+            wsFacade.joinGame(authToken, userName, null, id);
+            clientState = State.IN_GAME;
         }
         catch (Exception e) {
             return SET_TEXT_COLOR_RED + "Error Occured\n";
         }
-        return renderGame(game, null, null);
+        return "\n";
     }
 
     private String logout() {
@@ -348,6 +365,14 @@ public class ChessClient {
                 loggedInIntro;
     }
 
+    public String helpObserver() {
+        return SET_TEXT_COLOR_BLUE + "Redraw "+ SET_TEXT_COLOR_YELLOW + "- the board\n" +
+                SET_TEXT_COLOR_BLUE +"Leave "+ SET_TEXT_COLOR_YELLOW + "- the game\n" +
+                SET_TEXT_COLOR_BLUE + "Highlight <POSITION> "+ SET_TEXT_COLOR_YELLOW + "- a piece to view valid moves for that piece\n" +
+                SET_TEXT_COLOR_BLUE +"help "+ SET_TEXT_COLOR_YELLOW + "- with possible commands\n" +
+                loggedInIntro;
+    }
+
 
     public String renderGame(ChessGame game, ChessGame.TeamColor color, Set<ChessMove> highlightedMoves) {
         Set<ChessPosition> endPosSet=new HashSet<>(Collections.emptySet());
@@ -358,7 +383,7 @@ public class ChessClient {
         }
         
         if(color == null) {
-            return renderBlack(game, endPosSet) + renderWhite(game, endPosSet);
+            return renderWhite(game, endPosSet);
         }
         else if (color == ChessGame.TeamColor.WHITE) {
             return renderWhite(game, endPosSet);

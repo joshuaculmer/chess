@@ -53,7 +53,7 @@ public class WebSocketHandler {
             }
             ChessGame.TeamColor color = usercmd.getColor();
             ServerMessage notification = null;
-            if(color == null) {
+            if(color != null) {
                 notification=new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " joined the game as " + color);
             }
             else {
