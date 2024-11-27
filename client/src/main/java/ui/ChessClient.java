@@ -388,12 +388,7 @@ public class ChessClient {
         for(int row = 0; row <8; row++) {
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " ";
             for (int col=7; col >= 0; col--) {
-                if(endPosSet.contains(new ChessPosition(row+1, col+1) )) {
-                    result+=renderPiece(board, row, col, true);
-                }
-                else {
-                    result+=renderPiece(board, row, col, false);
-                }
+                result += renderPieceHighlighted(board, row, col, endPosSet);
             }
             result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
             result+="\n";
@@ -407,17 +402,22 @@ public class ChessClient {
         String result = "";
         result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + (row + 1) + " ";
         for (int col=0; col < 8; col++) {
-            if(endPosSet.contains(new ChessPosition(row+1, col+1) )) {
-                result+=renderPiece(board, row, col, true);
-            }
-            else {
-                result+=renderPiece(board, row, col, false);
-            }
+            result += renderPieceHighlighted(board, row, col, endPosSet);
         }
         result+=SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " +(row + 1) + " " +  SET_BG_COLOR_DARK_GREY;
         result+="\n";
         return result;
     }
+
+    public String renderPieceHighlighted(ChessBoard board, int row, int col, Set<ChessPosition> endPosSet) {
+        if(endPosSet.contains(new ChessPosition(row+1, col+1) )) {
+            return renderPiece(board, row, col, true);
+        }
+        else {
+            return renderPiece(board, row, col, false);
+        }
+    }
+
 
     public String renderPiece(ChessBoard board, int row, int col, boolean highlight) {
         String result = "";

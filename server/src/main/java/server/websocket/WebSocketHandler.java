@@ -116,14 +116,17 @@ public class WebSocketHandler {
                 game.makeMove(move);
                 gameService.updateGame(gameData.gameID(), game);
                 connections.broadcast(gameData.gameID(), new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
-                connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " has made a move\n"), userName);
+                connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        userName + " has made a move\n"), userName);
                 String whiteUserName = gameData.whiteUsername();
                 String blackUserName = gameData.blackUsername();
                 if(game.isInCheck(ChessGame.TeamColor.WHITE)) {
-                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, whiteUserName + " is in check\n"), userName);
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            whiteUserName + " is in check\n"), userName);
                 }
                 else if(game.isInCheck(ChessGame.TeamColor.BLACK)) {
-                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, blackUserName + " is in check\n"), userName);
+                    connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            blackUserName + " is in check\n"), userName);
                 }
                 else if(game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                     connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
@@ -159,7 +162,8 @@ public class WebSocketHandler {
             ChessGame game = gameData.game();
             game.gameOver();
             gameService.updateGame(gameData.gameID(), game);
-            connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, userName + " has resigned\n"));
+            connections.broadcast(gameData.gameID(), new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    userName + " has resigned\n"));
 
         }
         catch ( Exception e) {
