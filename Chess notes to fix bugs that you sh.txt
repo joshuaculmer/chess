@@ -6,3 +6,5 @@ Spark.websocket("/ws" websocketHandler or whatever class you have here) needs to
 make sure that the server you're calling here has the @Websocket tag
 
 Make sure that when referencing session, you use the org.eclipse.jetty.websocket.api.Session implementation of session. Not the jdk one
+
+Endgame test for fools mate game can incorrectly pass despite not meeting the specs. This gave me grief when trying to passofff. Make sure that you follow which user gets notifications, loadgames, and additional check/checkmate notifications.
